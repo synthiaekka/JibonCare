@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HaatXpress Customer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: linear-gradient(to right, #44315d, #522c54, #372a45); min-height: 100vh; margin: 0; padding: 0;}
+    header { background-color: #372a45; color: white; display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; flex-wrap: wrap;}
+    .logo { display: flex; align-items: center; gap: 12px;}
+    .logo img { width: 55px; }
+    .location { display: flex; align-items: center; gap: 8px; font-size: .97rem; margin-left: 12px;}
+    .nav-main { display: flex; align-items: center; gap: 24px; flex: 1; justify-content: center;}
+    .shop-cat-dropdown {border-radius:8px; padding:7px 12px; font-size:16px; background:#ede2fc; color:#522c54; border:none; font-family:inherit; margin-right:18px; outline:none;}
+    .shop-cat-dropdown:focus { box-shadow:0 0 0 2px #a087e6; }
+    .search-bar { display: flex; align-items: center;}
+    .search-bar input { padding: 8px 12px; border-radius: 8px 0 0 8px; border: none; font-size: 14px;}
+    .search-bar button { padding: 8px 12px; background-color: #6a8973; color: white; border: none; border-radius: 0 8px 8px 0; cursor: pointer;}
+    .auth-cart { display: flex; align-items: center; gap: 18px;}
+    .cart-icon { color:white; cursor:pointer; position: relative;}
+    #cart-count { position: absolute; top: -8px; right: -12px; background: #6a8973; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%;}
+    .logout-btn {
+      margin-left: 12px; background: #e74c3c; color: #fff; padding: 7px 20px; border-radius: 6px;
+      font-weight: 600; text-decoration: none; transition: background 0.16s; border: none; outline: none;
+      display: inline-block;
+    }
+    .logout-btn:hover { background: #c0392b; color: #fff; }
+    .hero { text-align: center; color: white; padding: 44px 16px 7px 16px;}
+    .hero h2 { font-size: 2.1rem;}
+    .hero p { font-size: 1.07rem; max-width: 560px; margin: auto; color: #dcd6e3;}
+    .store-section { display: flex; flex-wrap: wrap; justify-content: center; padding: 26px 12px; gap: 24px;}
+    .store-card { background-color: #4a3758; color: white; padding: 20px; border-radius: 14px; width: 240px; cursor: pointer; transition: transform 0.22s; border: 1px solid #6a8973; text-align: center;}
+    .store-card:hover { background-color: #6a8973; transform: translateY(-6px);}
+    .store-card img {width:64px; height:64px; margin: 8px auto 14px auto; display:block; border-radius:10px; object-fit:cover;}
+    .category-badge { display:inline-block; border-radius:8px; font-size:13px; color:#31285b; background:#a6fff8; padding:2px 10px; margin-bottom:7px; }
+    .modal {
+      display: none; position: fixed; top: 8vh; left: 0; width: 100vw; height: 100vh; z-index: 3000; background: rgba(40,21,64,0.26);
+    }
+    .modal.active {
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    .modal-content {
+      background: rgba(60,38,90,0.97); border-radius: 24px; padding: 40px 36px 25px 36px; max-width: 460px; width: 97vw;
+      margin-top: 40px; position: relative; box-shadow: 0 8px 35px rgba(90,41,200,0.13); color: #fff;
+      font-family: 'Poppins', sans-serif; box-sizing: border-box;
+    }
+    .modal-content .modal-close {
+      background: #32473c; border: none; color: #fff; border-radius: 9px; padding: 7px 19px;
+      font-size: 1em; font-weight: bold; position: absolute; top: 18px; right: 20px; cursor: pointer; transition:.18s;}
+    .modal-content .modal-close:hover { background: #7ecd99;}
+    .modal-content h2 { margin-top: 0; margin-bottom: 8px; font-size: 1.47em; font-weight: bold;}
+    .shop-info { color: #c6eabb; font-size: 1.04em; margin-bottom: 14px; letter-spacing:.1px; }
+    .product-list-modal { list-style: none; padding: 0; margin: 0 0 16px 0; }
+    .product-list-modal li {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; background: #493d5f;
+      border-radius: 11px; padding: 13px 9px; font-size: 1.09em;}
+    .product-title { font-weight: 500; margin-right: 3px;}
+    .product-price { font-weight: 700; letter-spacing:0.5px; margin-right: 6px;}
+    .product-type { font-size: .98em; color:#d6e5ff; font-style:italic;}
+    .add-cart-btn {
+      background: #a8eeaf !important; border: none; padding: 6px 19px; color: #273f25; border-radius: 9px;
+      font-weight: 600; font-size:.97em; cursor: pointer; transition: background .14s;
+    }
+    .add-cart-btn:hover { background: #9bd5fc !important; color: #2a1353;}
+    .product-modal-total { font-weight: 700; margin-top: 16px; font-size: 1.18em; color:#fff; text-align:right;}
+    .cart-modal, #addressModal { display: none; position:fixed; top:12vh; left:50%; transform:translateX(-50%); width:90vw; max-width:420px;background:rgba(55,42,69,0.97);color:#fff;border-radius:16px;padding:28px 30px 25px 30px;z-index:10000;box-shadow:0 8px 40px rgba(60,40,90,.13);}
+    .cart-modal.active, #addressModal.active { display:block; }
+    .cart-close { float: right; background: #6a8973; border: none; padding: 10px; border-radius: 5px; color: white; cursor: pointer; font-weight:600;}
+    .prod-list li {margin: 14px 0; padding: 7px 0 7px 8px; border-radius:5px; background: #534160; display:flex; justify-content:space-between; align-items:center;}
+    .prod-list button { padding: 4px 13px; background: #9be58a; color:#372a45; border:none; border-radius:8px; cursor:pointer; font-weight:bold;}
+    .prod-list button:hover { background:#7f58e7; color: #fff;}
+    #cart-total, #total-price { margin-top: 18px; font-weight: bold; font-size: 1.08em;}
+    .cart-modal ul {margin: 0 0 10px 0; padding: 0; list-style: none;}
+    .cart-modal li {display: flex; justify-content: space-between; align-items: center; background:#4a3758; margin-bottom:7px; border-radius:8px; padding:8px 11px;}
+    .cart-modal span {margin: 0 7px;}
+    .cart-actions { display: flex; justify-content: space-between; gap: 1em; margin-top:18px;}
+    .cart-actions button { padding: 10px 17px; border:none; border-radius:7px; font-weight:bold;}
+    .pay-btn { background:#8EC5FC; color:#372a45;}
+    .cod-btn { background:#ffdfa6; color:#372a45;}
+    .order-btn { background:#7f58e7; color:#fff;}
+    .order-btn:disabled {background: #ddd; color:#888;}
+    #addressModal label {font-weight: 600;}
+    #addressModal input, #addressModal textarea {
+      width:98%; margin:8px 0 18px 0; padding:9px; border-radius:7px; border:none; font-size:1em; font-family: inherit; }
+    #addressModal button {margin-right:7px; padding:9px 17px; border:none; border-radius:7px; background:#7f58e7; color:#fff; font-weight:bold;}
+    #addressModal .close-address {background:#e74c3c;}
+    footer { background-color: #251c30; color: #c4b7a6; text-align: center; padding: 20px; }
+    #chatbot-btn {
+      position: fixed; bottom: 28px; right: 28px; z-index: 70000;
+      background: #7f58e7; border-radius:50%; box-shadow:0 2px 16px #846ae952;
+      width:68px; height:68px; display:flex;
+      justify-content:center; align-items:center; cursor:pointer; border:none;
+      color:white; font-size:32px;
+      transition: background .17s;
+    }
+    #chatbot-btn:hover { background: #583ea4; }
+    #chatbot-modal {
+      display: none; position: fixed; bottom: 105px; right: 35px;
+      background: #fff; color: #23214a; border-radius: 16px; width: 348px; max-width:90vw;
+      box-shadow:0 8px 36px #463c634b; z-index: 70001; overflow: hidden; font-family: 'Poppins',sans-serif; border: 2px solid #7f58e7;
+    }
+    #chatbot-modal.active { display: block; }
+    #chatbot-header {
+      background: #7f58e7; color: #fff; padding: 14px 20px 13px 20px; font-weight: bold; font-size: 1.12em;
+      display: flex; align-items:center; justify-content:space-between;
+    }
+    #chatbot-header button {
+      border: none; background: transparent; color: #fff; font-size: 1.24em; cursor: pointer;}
+    #chat-messages { max-height: 238px; overflow-y: auto; padding: 17px 18px 13px 18px; font-size:15.5px; min-height:48px;}
+    .chat-msg {margin-bottom:14px;}
+    .chat-msg.user {color:#583ea4; text-align:right;}
+    .chat-msg.bot {color:#222; text-align:left;}
+    #chatbot-form { display:flex; padding: 9px 13px; border-top: 1px solid #eee;}
+    #chatbot-input {
+      flex:1; padding:8px 10px; border:1px solid #ddd; border-radius:8px; font-size:1em; font-family:inherit;}
+    #chatbot-form button {
+      margin-left:8px; background: #7f58e7; color:#fff; border:none; border-radius:7px; padding: 8px 19px; font-weight:500; cursor:pointer;}
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/jiboncare_Logo.png') }}" alt="HaatXpress Logo">
+      <div class="location">
+        <i class="fas fa-map-marker-alt"></i>
+        <span id="location-text">Detecting your location...</span>
+        <button onclick="detectLocation()" style="margin-left:7px;background:#7f58e7;color:#fff;border:none;border-radius:5px;padding:3px 10px;cursor:pointer;">
+          <i class="fa fa-crosshairs"></i> Update
+        </button>
+      </div>
+    </div>
+    <div class="nav-main">
+      <label style="color:#ede2fc; font-weight:600; margin-right:7px;">Select Category:</label>
+      <select id="catSelect" class="shop-cat-dropdown" onchange="categoryChanged()">
+        <option value="">All</option>
+        <option value="grocery">Grocery</option>
+        <option value="medicine">Medicine</option>
+        <option value="food-item">Restaurant</option>
+      </select>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search store, product or location..." onkeyup="liveFilterShop()" />
+        <button><i class="fas fa-search"></i></button>
+      </div>
+    </div>
+    <div class="auth-cart">
+      <button onclick="showMyOrders()" class="logout-btn" style="background:#9147fa;margin-right:8px;">My Orders</button>
+      <span class="cart-icon" onclick="showCartModal()">
+        <i class="fas fa-shopping-cart" style="font-size: 22px;">
+          <span id="cart-count">0</span>
+        </i>
+      </span>
+      {% if user_email %}
+        <a href="/logout" class="logout-btn">Logout</a>
+      {% else %}
+        <a href="/register" class="logout-btn" style="background:#3cae74;">Register</a>
+        <a href="/login" class="logout-btn" style="background:#5189ec;">Login</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <h2>Welcome to HaatXpress</h2>
+    <p>Connecting you directly to local shops — groceries, medicines, food & more, all from your trusted neighborhood within 5km.</p>
+  </div>
+
+  <!-- SHOPS LIST -->
+  <div class="store-section" id="store-list">
+    <div style="color:white;font-size:1.19em;text-align:center;width:100%;margin:80px auto;">Loading shops...</div>
+  </div>
+
+  <!-- PRODUCT MODAL -->
+  <div class="modal" id="modal" onclick="clickOutsideModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">Close</button>
+      <h2 id="modal-title">Store Name</h2>
+      <div class="shop-info" id="modal-shop-info"></div>
+      <ul class="product-list-modal" id="product-list"></ul>
+      <div class="product-modal-total" id="total-price">Total: ₹0</div>
+      <div style="text-align:right; margin-top:12px;">
+        <button onclick="showCartModal()" style="background:#a6fff8;color:#31285b;padding:9px 25px; border-radius:7px; font-size:1em; font-weight:600;">Proceed to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CART MODAL -->
+  <div class="cart-modal" id="cartModal">
+    <button class="cart-close" onclick="closeCartModal()">X</button>
+    <h3 style="margin-bottom:18px;">🛒 Your Cart</h3>
+    <ul id="cart-items"></ul>
+    <div id="cart-total">Total: ₹0</div>
+    <div class="cart-actions" id="payment-actions" style="margin-bottom:10px;">
+      <button class="pay-btn" onclick="selectPayment('online')" id="pay-btn" disabled>Pay Online</button>
+      <button class="cod-btn" onclick="selectPayment('cod')" id="cod-btn" disabled>Cash on Delivery</button>
+    </div>
+    <button class="order-btn" onclick="proceedAddress()" id="order-btn" disabled>Place Order</button>
+  </div>
+
+  <!-- ADDRESS MODAL -->
+  <div id="addressModal">
+    <form onsubmit="submitOrder(event)">
+      <h3>Enter Delivery Details</h3>
+      <label>Your Name:</label>
+      <input type="text" id="custName" required>
+      <label>Mobile Number:</label>
+      <input type="text" id="custMobile" required pattern="\d{10,}">
+      <label>Delivery Address:</label>
+      <textarea id="custAddr" rows="3" required></textarea>
+      <button type="button" onclick="getLocation()">Use Current Location</button>
+      <input type="hidden" id="lat">
+      <input type="hidden" id="lng">
+      <div style="margin-top:14px;">
+        <button type="submit">Submit Order</button>
+        <button type="button" class="close-address" onclick="closeAddressModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- MY ORDERS MODAL -->
+  <div id="myOrdersModal" style="display:none; position:fixed;top:7vh;left:50%;transform:translateX(-50%);width:96vw;max-width:600px;background:rgba(55,42,69,0.97);color:#fff;z-index:20000;padding:38px 19px 24px 19px;border-radius:16px;box-shadow:0 8px 40px rgba(60,40,90,.13);">
+    <button style="float:right;background:#e74c3c;border:none;color:#fff;border-radius:7px;padding:8px 18px;cursor:pointer;" onclick="closeMyOrders()">Close</button>
+    <h3 style="margin-bottom:18px;">🧾 My Orders</h3>
+    <div id="orders-list">
+      <div style="color:#d8cdfd;">Loading...</div>
+    </div>
+  </div>
+
+  <!-- CHATBOT, FOOTER, ETC ... -->
+  <button id="chatbot-btn" onclick="openChatbot()">
+    <i class="fas fa-comment-dots"></i>
+  </button>
+  <div id="chatbot-modal">
+    <div id="chatbot-header">
+      Need Help?
+      <button onclick="closeChatbot()"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="chat-messages"></div>
+    <form id="chatbot-form" onsubmit="chatbotSend(event)">
+      <input id="chatbot-input" autocomplete="off" type="text" placeholder="Type your question..."/>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+  <footer>
+    <p>&copy; 2025 HaatXpress. Made with 🧡 for your neighborhood.</p>
+    <p>Contact: <a href="mailto:support@haatexpress.com" style="color:#6a8973;">support@haatexpress.com</a></p>
+  </footer>
+  <!-- FULL JS LOGIC -->
+  <script>
+    let cart = [];
+    let total = 0;
+    let ALL_SHOPS = [];
+    let CATEGORY = '';
+    let CURRENT_SHOP = null;
+    let PAYMENT_MODE = null;
+    let USER_LAT = null, USER_LNG = null;
+
+    // --- LOCATION LOGIC --- //
+    function detectLocation() {
+      document.getElementById('location-text').innerText = 'Detecting your location...';
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            USER_LAT = pos.coords.latitude;
+            USER_LNG = pos.coords.longitude;
+            document.getElementById('location-text').innerText = `Lat: ${USER_LAT.toFixed(4)}, Lng: ${USER_LNG.toFixed(4)}`;
+            loadShops(CATEGORY);
+          },
+          function(err) {
+            document.getElementById('location-text').innerText = "Location unavailable";
+            alert("Failed to get GPS: " + err.message);
+            USER_LAT = USER_LNG = null;
+            loadShops(CATEGORY);
+          }
+        );
+      } else {
+        document.getElementById('location-text').innerText = "Geolocation not supported";
+        USER_LAT = USER_LNG = null;
+      }
+    }
+
+    function loadShops(category='') {
+      let url = "/customer/shops";
+      let params = [];
+      if(category) params.push("category=" + encodeURIComponent(category));
+      if(USER_LAT !== null && USER_LNG !== null) {
+        params.push("lat=" + encodeURIComponent(USER_LAT));
+        params.push("lng=" + encodeURIComponent(USER_LNG));
+      }
+      if (params.length) url += "?" + params.join("&");
+      fetch(url)
+        .then(res => res.json())
+        .then(shops => { ALL_SHOPS = shops; displayShops(shops); });
+    }
+
+    function displayShops(shoplist) {
+      let row = document.getElementById('store-list');
+      if (!shoplist.length) {
+        row.innerHTML = `<div style="color:white;text-align:center;width:100%;">No shops found${CATEGORY ? ' in this category.' : '.'}</div>`;
+        return;
+      }
+      row.innerHTML = '';
+      for (const s of shoplist) {
+        let cdiv = document.createElement('div');
+        cdiv.className = "store-card";
+        cdiv.setAttribute('data-name', ((s.shop_name || '') + " " + (s.shop_address || '') + " " + (s.shop_contact || '')).toLowerCase());
+        cdiv.onclick = () => openModal(s);
+        cdiv.innerHTML = `
+          <span class="category-badge">${
+            s.shop_type === 'grocery' ? 'Grocery'
+            : s.shop_type === 'medicine' ? 'Medicine'
+            : s.shop_type === 'food-item' ? 'Restaurant' : 'Other'
+          }</span>
+          <img src="${s.shop_photo || '/static/default-avatar.png'}" />
+          <h3>${s.shop_name || 'Unnamed Shop'}</h3>
+          <div style='font-size:13px; color:#c1f6b3; margin-bottom:8px;'>${s.shop_contact || ''}</div>
+          <div style='font-size:13px; color:#dedede;'>${s.shop_address || ''}</div>`;
+        if ('distance_km' in s) {
+          cdiv.innerHTML += `<div style="color:#ace9ff;font-size:13px;">Distance: ${s.distance_km} km</div>`;
+        }
+        if ('matching_products' in s && s.matching_products.length) {
+          cdiv.innerHTML += `<div style="margin-top:7px;color:#a6fff8;font-size:14px;">
+            <b>Matched products:</b> ${s.matching_products.join(', ')}
+          </div>`;
+        }
+        row.appendChild(cdiv);
+      }
+    }
+
+    function categoryChanged() {
+      let cat = document.getElementById('catSelect').value;
+      CATEGORY = cat;
+      document.getElementById('searchInput').value = '';
+      loadShops(cat);
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    function liveFilterShop() {
+      let text = document.getElementById('searchInput').value.trim().toLowerCase();
+      let cat = document.getElementById('catSelect').value;
+      if (text.length > 0) {
+        let url = `/customer/search-shops-by-product?query=${encodeURIComponent(text)}${cat ? `&category=${encodeURIComponent(cat)}` : ''}`;
+        if (USER_LAT !== null && USER_LNG !== null) url += `&lat=${USER_LAT}&lng=${USER_LNG}`;
+        fetch(url)
+          .then(res => res.json())
+          .then(productShops => {
+            let matchedShops = ALL_SHOPS.filter(s =>
+              ((s.shop_name||'') + ' ' + (s.shop_address||'') + ' ' + (s.shop_contact||'')).toLowerCase().includes(text)
+            );
+            let combined = [];
+            let ids = new Set();
+            for (let shop of productShops) {
+              combined.push(shop); ids.add(shop.email);
+            }
+            for (let shop of matchedShops) {
+              if (!ids.has(shop.email)) { combined.push(shop); ids.add(shop.email);}
+            }
+            displayShops(combined);
+          });
+      } else {
+        loadShops(cat);
+      }
+    }
+
+    function openModal(shop) {
+      CURRENT_SHOP = shop;
+      cart = []; total = 0;
+      updateCartView();
+      document.getElementById('modal').classList.add('active');
+      document.getElementById('modal-title').innerText = shop.shop_name || 'Shop';
+      document.getElementById('modal-shop-info').innerText = (shop.shop_address||'') + " | " + (shop.shop_contact||'');
+      let prodUl = document.getElementById('product-list');
+      prodUl.innerHTML = "<li>Loading...</li>";
+      fetch(`/customer/products/${shop.email}`)
+        .then(res => res.json())
+        .then(products => {
+          prodUl.innerHTML = '';
+          if(!products.length) {prodUl.innerHTML = "<li>No products yet.</li>"; return;}
+          for(const p of products) {
+            let li = document.createElement('li');
+            li.innerHTML = `<span>
+                <span class="product-title">${p.name}</span>
+                <span class="product-price">₹${p.price}</span>
+                <span class="product-type">(${p.type})</span>
+              </span>
+              <button class="add-cart-btn" onclick="event.stopPropagation(); addToCart('${p.name}',${+p.price});">Add to Cart</button>`;
+            prodUl.appendChild(li);
+          }
+          document.getElementById('total-price').innerText = `Total: ₹${total}`;
+        });
+    }
+    function closeModal() { document.getElementById('modal').classList.remove('active'); }
+    function clickOutsideModal(e) { if (e.target.classList.contains('modal')) closeModal(); }
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      total += price;
+      updateCartView();
+      document.getElementById('cart-count').innerText = cart.length;
+      document.getElementById('total-price').innerText = `Total: ₹${total}`;
+    }
+    function showCartModal() {
+      document.getElementById('modal').classList.remove('active');
+      updateCartView();
+      document.getElementById('cartModal').classList.add('active');
+    }
+    function closeCartModal() { document.getElementById('cartModal').classList.remove('active'); }
+    function updateCartView() {
+      let ul = document.getElementById('cart-items');
+      if (cart.length === 0) {
+        ul.innerHTML = "<li style='text-align:center;color:#c4b7a6;'>Your cart is empty.</li>";
+        enableCartButtons(false);
+        document.getElementById('cart-count').innerText = 0;
+        document.getElementById('cart-total').innerText = "Total: ₹0";
+        return;
+      }
+      let counts = {};
+      cart.forEach(item => {
+        counts[item.name] = counts[item.name] ? {qty: counts[item.name].qty+1, price: item.price} : {qty:1, price:item.price};
+      });
+      ul.innerHTML = '';
+      let totalPrice = 0;
+      for (const name in counts) {
+        let li = document.createElement('li');
+        let price = counts[name].price, qty = counts[name].qty;
+        totalPrice += price * qty;
+        li.innerHTML = `<span>${name} x${qty}</span><span>₹${price*qty}</span>`;
+        ul.appendChild(li);
+      }
+      document.getElementById('cart-count').innerText = cart.length;
+      document.getElementById('cart-total').innerText = "Total: ₹" + totalPrice;
+      enableCartButtons(true);
+    }
+    function enableCartButtons(val) {
+      document.getElementById('order-btn').disabled = !val;
+      document.getElementById('pay-btn').disabled = !val;
+      document.getElementById('cod-btn').disabled = !val;
+    }
+    function selectPayment(mode) {
+      PAYMENT_MODE = mode;
+      document.getElementById('pay-btn').style.boxShadow = mode === 'online' ? '0 0 0 2px #8EC5FC' : '';
+      document.getElementById('cod-btn').style.boxShadow = mode === 'cod' ? '0 0 0 2px #ffdfa6' : '';
+    }
+    function proceedAddress() {
+      if(!PAYMENT_MODE) {
+        alert("Please choose payment method.");
+        return;
+      }
+      closeCartModal();
+      document.getElementById('addressModal').classList.add('active');
+    }
+    function closeAddressModal() { document.getElementById('addressModal').classList.remove('active'); }
+    function getLocation() {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+          document.getElementById('lat').value = pos.coords.latitude;
+          document.getElementById('lng').value = pos.coords.longitude;
+          alert("Location captured! ("+pos.coords.latitude + ", " + pos.coords.longitude+")");
+        }, function(err) {
+          alert("Failed to get GPS: " + err.message);
+        });
+      } else {
+        alert("Geolocation is not available.");
+      }
+    }
+    function submitOrder(e) {
+      e.preventDefault();
+      let payload = {
+        shop_email: CURRENT_SHOP ? CURRENT_SHOP.email : '',
+        shop_name: CURRENT_SHOP ? CURRENT_SHOP.shop_name : '',
+        items: cart, total, payment: PAYMENT_MODE,
+        name: document.getElementById('custName').value,
+        phone: document.getElementById('custMobile').value,
+        address: document.getElementById('custAddr').value,
+        lat: document.getElementById('lat').value,
+        lng: document.getElementById('lng').value,
+      };
+      fetch('/customer/place-order', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(resp => {
+        alert(resp.message || 'Order placed!');
+        cart.length = 0; total = 0; closeAddressModal(); updateCartView();
+      })
+      .catch(()=>alert('Failed to place order, try again.'));
+    }
+    // ---- MY ORDERS ----
+    function showMyOrders() {
+      document.getElementById('myOrdersModal').style.display = 'block';
+      document.getElementById('orders-list').innerHTML = `<div style="color:#d8cdfd;">Loading...</div>`;
+      fetch('/customer/my-orders-data').then(r=>r.json()).then(orders => {
+        let out = "";
+        if (!orders.length) {
+          out = "<p style='color:#ea7a7a;font-size:1.07em;'>No orders yet.</p>";
+        } else {
+          for (let o of orders) {
+            out += `<div style="border-bottom:1px solid #644a86;margin-bottom:11px;padding-bottom:8px;">
+              <span style="font-weight:600;color:#4fffcf;">${o.shop_name||'Shop'}</span>
+              <span style="font-size:13px;color:#ffc7ff;margin-left:7px;">on ${o.timestamp||'(date?)'}</span><br>
+              <span style="color:#ade5fd;">Total: ₹${o.total}</span>
+              <ul style="margin:7px 0 0 11px;color:#ffe9d0;font-size:14px;">
+                ${(o.items||[]).map(it=>`<li>${it.name} x1 — ₹${it.price}</li>`).join('')}
+              </ul>
+              <span style="font-size:12px;">Delivery Address: ${o.address||''}</span>
+            </div>`;
+          }
+        }
+        document.getElementById('orders-list').innerHTML = out;
+      });
+    }
+    function closeMyOrders() {
+      document.getElementById('myOrdersModal').style.display = 'none';
+    }
+
+    // ---- On load: get location, show nearby shops
+    window.onload = function() {
+      CATEGORY = '';
+      detectLocation(); // will auto-call loadShops on location success/fail
+      document.getElementById('catSelect').value = '';
+      chatbotInit();
+    };
+
+    // -- Chatbot code --
+    function openChatbot() {
+      document.getElementById('chatbot-modal').classList.add('active');
+      setTimeout(()=>{document.getElementById('chatbot-input').focus();},150);
+    }
+    function closeChatbot() {
+      document.getElementById('chatbot-modal').classList.remove('active');
+    }
+    function chatbotInit() {
+      document.getElementById('chat-messages').innerHTML = '<div class="chat-msg bot">👋 Hi! I\'m your HaatXpress virtual assistant.<br/>How can I help you today?</div>';
+    }
+    function chatbotSend(e) {
+      e.preventDefault();
+      let input = document.getElementById('chatbot-input');
+      let msg = input.value.trim();
+      if (!msg) return;
+      chatAppend('user', msg);
+      input.value = '';
+      setTimeout(()=>botReply(msg), 650);
+    }
+    function chatAppend(sender, msg) {
+      const c = document.createElement('div');
+      c.className = 'chat-msg ' + sender;
+      c.innerHTML = (sender==='user'?'<b>You:</b> ':'<b>Bot:</b> ') + escapeHtml(msg);
+      document.getElementById('chat-messages').appendChild(c);
+      document.getElementById('chat-messages').scrollTop = 100000;
+    }
+    function escapeHtml(txt) {
+      return txt.replace(/[<>&"]/g, function(c) {
+        return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];
+      });
+    }
+    function botReply(msg) {
+      msg = msg.toLowerCase();
+      let reply = "Sorry, I don't understand. Please rephrase or contact support@haatexpress.com.";
+      if (msg.includes('order') && msg.includes('status')) reply = "To track your order, click 'My Orders' above.";
+      else if (msg.includes('cod') || msg.includes('cash')) reply = "Yes, Cash on Delivery (COD) is available for most items.";
+      else if (msg.includes('payment') || msg.includes('pay online')) reply = "You can pay online using UPI/Card, or select COD while ordering.";
+      else if (msg.includes('address')) reply = "You can enter your delivery address at checkout. For best results, allow your browser to share location.";
+      else if (msg.includes('cancel')) reply = "To cancel an order, contact your shop directly or write to support@haatexpress.com as soon as possible.";
+      else if (msg.includes('shop') && msg.includes('not found')) reply = "If you can't find your local shop, ask the shopkeeper to register on HaatXpress!";
+      else if (msg.includes('hello') || msg.includes('hi')) reply = "Hello! How can I help you?";
+      else if (msg.includes('help')) reply = "Sure! Please tell me your problem or question about shopping, payment, or delivery.";
+      chatAppend('bot', reply);
+    }
+  </script>
+</body>
+</html>

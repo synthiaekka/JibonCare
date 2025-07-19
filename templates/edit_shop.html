@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Shop Details - HaatExpress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-violet-500 via-purple-400 to-violet-700 min-h-screen flex items-center justify-center">
+
+<div class="bg-white p-8 rounded-xl shadow-xl max-w-lg w-full">
+    <h2 class="text-2xl font-bold text-violet-700 mb-6">Edit Shop Details</h2>
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        <div>
+            <label class="block font-medium">Name of shop</label>
+            <input type="text" name="shop_name" required value="{{ shop.shop_name }}" class="w-full border p-2 rounded" />
+        </div>
+        <div>
+            <label class="block font-medium">Contact number (visible to customer)</label>
+            <input type="text" name="shop_contact" required maxlength="15" value="{{ shop.shop_contact }}" class="w-full border p-2 rounded" />
+        </div>
+        <div>
+            <label class="block font-medium">Address</label>
+            <textarea name="shop_address" required rows="2" class="w-full border p-2 rounded">{{ shop.shop_address }}</textarea>
+        </div>
+        <div>
+            <label class="block font-medium">Shop Photo (leave empty to keep current photo)</label>
+            <input type="file" name="shop_photo" accept="image/*" class="w-full border p-2 rounded" />
+            {% if shop.shop_photo %}
+            <img src="{{ shop.shop_photo }}" alt="Shop Photo" class="w-24 h-24 rounded-full object-cover mt-2 border-2 border-violet-400" />
+            {% endif %}
+        </div>
+        <div class="flex justify-between">
+            <a href="/seller/dashboard" class="underline text-gray-600">Cancel</a>
+            <button type="submit" class="bg-violet-700 hover:bg-violet-800 text-white px-6 py-2 rounded">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

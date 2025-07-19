@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - HaatExpress</title>
+    <style>
+        body { font-family: 'Poppins', Arial, sans-serif; margin: 0; background: #f8f5fe;}
+        .container { max-width: 1100px; margin: 40px auto; background: #fff; border-radius: 14px; box-shadow: 0 4px 30px rgba(90,41,200,0.07); padding: 38px;}
+        h1 { color: #6e49a9; }
+        .notice-form, .search-form { display: flex; align-items: center; margin-bottom: 24px; gap: 16px; }
+        .notice-form textarea { width: 240px; resize: vertical; }
+        .notice-form select, .search-form input { padding: 6px 10px; border-radius: 6px; border: 1px solid #aaa;}
+        .sellers-list { margin-top: 24px; }
+        .seller-block { border: 1px solid #ded3f7; padding: 18px 26px; border-radius: 10px; margin-bottom: 24px; background: #f3effa;}
+        .shop-type { background: #77cefb; color: #31285b; font-weight:600; padding: 3px 10px; border-radius: 6px; margin-left: 10px; font-size: 0.92em;}
+        .seller-actions { margin-top: 10px; }
+        .logout { float: right; background: #e74c3c; color: #fff; padding: 8px 20px; border-radius: 6px; font-weight: 600; text-decoration: none; transition: background 0.20s;}
+        .logout:hover { background: #c0392b;}
+        .products-list { margin: 12px 0 0 0; padding: 0; list-style: circle; color: #6e49a9;}
+        .products-list li { margin: 4px 0 0 12px;}
+        .order-list { margin: 18px 0 0 0; padding-top:6px; border-top:1px solid #e1dcf7; }
+        .order-block { margin-bottom:9px; background: #f8f4fc; border-radius:6px; padding:9px 11px;}
+        .order-status-btn {
+            font-size: 0.92em;
+            font-weight: 700;
+            border-radius: 5px;
+            padding: 2px 14px;
+            border: none;
+            margin-left: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .order-status-btn.pending { background: #fbea9a; color: #856800; }
+        .order-status-btn.pending:hover { background: #fae16d; }
+        .order-status-btn.paid { background: #baf7ca; color: #19723b; cursor: not-allowed; }
+        .order-status-btn[disabled] { opacity: 0.75; }
+        @media (max-width:650px){ .container{padding:8px;} .seller-block{padding:10px;}}
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <a href="/logout" class="logout">Logout</a>
+        <h1>Welcome, Admin <span style="font-size:0.6em; color:#7b37cf;">(you are queen)</span></h1>
+
+        <!-- Notice Panel -->
+        <form class="notice-form" method="POST" action="/admin/post-notice">
+            <label><b>Send Notice</b></label>
+            <select name="target_email">
+                <option value="all">All Sellers</option>
+                {% for seller in sellers %}
+                <option value="{{ seller.email }}">{{ seller.email }}</option>
+                {% endfor %}
+            </select>
+            <textarea name="message" placeholder="Type notice..." required></textarea>
+            <button type="submit" style="background:#7b37cf;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-weight:bold;">Send Notice</button>
+        </form>
+
+        <!-- Search Panel -->
+        <form class="search-form" onsubmit="return false;">
+            <input id="sellerSearch" type="text" placeholder="Search Sellers..." onkeyup="filterSellers()" style="width:200px;">
+        </form>
+
+        <h2 style="color:#6e49a9;">Registered Sellers and Their Products</h2>
+        <div class="sellers-list" id="sellers-list">
+            {% for seller in sellers %}
+                <div class="seller-block" data-seller="{{ seller.shop_name|lower }} {{ seller.email|lower }} {{ seller.shop_address|lower }}">
+                    <div style="font-size:1.2em; font-weight:600; color:#31285b;">
+                        {{ seller.shop_name or 'Unknown Shop' }} 
+                        {% if seller.shop_type %}
+                            <span class="shop-type">
+                                {% if seller.shop_type == "grocery" %}Grocery
+                                {% elif seller.shop_type == "medicine" %}Medicine
+                                {% elif seller.shop_type == "food-item" %}Restaurant / Food Item
+                                {% else %}{{ seller.shop_type }}{% endif %}
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div><b>{{ seller.email }}</b></div>
+                    <div>📍 {{ seller.shop_address or "N/A" }}</div>
+                    <div>📞 {{ seller.shop_contact or "N/A" }}</div>
+                    <div>
+                        Earnings: ₹{{ grouped_earnings[seller.email]['total_earnings'] }} 
+                        <span style="font-size:0.9em;color:#6e49a9;">(Last: {{ grouped_earnings[seller.email]['last_updated'] }})</span>
+                    </div>
+
+                    {% if grouped_items[seller.email]|length %}
+                        <ul class="products-list">
+                        {% for item in grouped_items[seller.email] %}
+                            <li>
+                                {{ item.name }}<br>
+                                ₹{{ item.price }} <span style="color:grey;">({{ item.type }})</span><br>
+                                Uploaded: {{ item.timestamp }}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div style="color:#b88cb8; margin:8px 0;">No products uploaded yet.</div>
+                    {% endif %}
+
+                    <!-- ===== ORDERS BLOCK START ===== -->
+                    {% set orders = grouped_orders[seller.email] %}
+                    <div class="order-list">
+                        <b style="font-size:1.05em;color:#7b37cf;">Recent Orders:</b>
+                        {% if orders %}
+                        <ul style="margin:8px 0 0 0; padding-left:14px;">
+                            {% for order in orders %}
+                            <li class="order-block">
+                                <b>Customer:</b> {{ order.name }} <span style="color:#888;">({{ order.phone }})</span><br>
+                                <b>Total:</b> ₹{{ order.total }}
+                                {% if order.paid_status == 'paid' %}
+                                    <button type="button" class="order-status-btn paid" disabled>Paid</button>
+                                {% else %}
+                                    <form action="/admin/mark-order-paid/{{ order._id }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="order-status-btn pending">Mark as Paid</button>
+                                    </form>
+                                {% endif %}<br>
+                                <b>Payment:</b> {{ order.payment }}<br>
+                                <b>Items:</b>
+                                <ul style="margin:2px 0 0 10px;">
+                                    {% for item in order['items'] %}
+                                    <li>{{ item.name }} x1 (₹{{ item.price }})</li>
+                                    {% endfor %}
+                                </ul>
+                                <small style="color:#888;">Order Time: {{ order.timestamp }}</small>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                            <div style="color:#b88cb8;">No orders yet.</div>
+                        {% endif %}
+                    </div>
+                    <!-- ===== ORDERS BLOCK END ===== -->
+
+                    <div class="seller-actions">
+                        <form method="POST" action="/admin/remove-seller/{{ seller.email }}" onsubmit="return confirm('Are you sure you want to remove this seller?');" style="display:inline;">
+                            <button type="submit" style="background:#e74c3c; color:#fff; border:none; border-radius:6px; padding:6px 14px; font-weight:600; cursor:pointer;">Remove Seller</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+    // Basic client-side search
+    function filterSellers() {
+        let query = document.getElementById('sellerSearch').value.toLowerCase();
+        document.querySelectorAll('.seller-block').forEach(block => {
+            let txt = block.getAttribute('data-seller') || "";
+            block.style.display = txt.includes(query) ? "" : "none";
+        });
+    }
+    </script>
+</body>
+</html>

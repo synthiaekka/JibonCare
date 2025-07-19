@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | HaatXpress</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* Responsive basic styling in case you don't have style.css */
+    body {
+      background: #f5f4fb;
+      font-family: 'Poppins', Arial, sans-serif;
+      margin: 0;
+    }
+    .form-container {
+      background: #fff;
+      max-width: 375px;
+      margin: 48px auto 0 auto;
+      padding: 32px 32px 24px 32px;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(54,24,155,0.09);
+    }
+    h2 {
+      color: #492384;
+      font-size: 1.55em;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 500;
+      color: #5e4782;
+    }
+    input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 9px 11px;
+      margin-top: 4px;
+      margin-bottom: 6px;
+      border: 1px solid #cab1ff;
+      border-radius: 6px;
+      font-size: 1em;
+      background: #f5f4fb;
+      color: #3d3263;
+      box-sizing: border-box;
+    }
+    button[type="submit"] {
+      margin-top: 14px;
+      width: 100%;
+      background: #7b37cf;
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 4px;
+      font-size: 1.12em;
+      cursor: pointer;
+      transition: background 0.17s;
+    }
+    button[type="submit"]:hover {
+      background: #5c24a7;
+    }
+    .social-login {
+      text-align: center;
+      margin: 22px 0 10px 0;
+    }
+    .social-login img {
+      height: 44px;
+      cursor: pointer;
+      transition: box-shadow 0.13s;
+    }
+    .social-login img:hover {
+      box-shadow: 0 4px 16px rgba(121,50,200,0.13);
+    }
+    .form-footer, .form-footer a {
+      color: #624a91;
+      font-size: 0.96em;
+      text-align: center;
+      margin-top: 12px;
+      text-decoration: none;
+    }
+    @media (max-width: 465px) {
+      .form-container { padding: 13px 8px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Login to HaatXpress</h2>
+    <form method="POST" action="/login">
+      <label for="email">Email</label>
+      <input type="email" name="email" required placeholder="Enter your email">
+
+      <label for="password">Password</label>
+      <input type="password" name="password" required placeholder="Enter your password">
+
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Google Sign-In Button -->
+    <div class="social-login">
+     
+    <!-- Or fallback text link, if image is not present:
+    <p class="social-login"><a href="{{ url_for('google_login') }}">Continue with Google</a></p>
+    -->
+
+    <p style="margin:14px 0 2px 0;">
+      <a href="/forgot-password">Forgot Password?</a>
+    </p>
+    <p class="form-footer">
+      Don't have an account?
+      <a href="/register">Register here</a>
+    </p>
+  </div>
+</body>
+</html>

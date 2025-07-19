@@ -1,0 +1,35 @@
+<!-- templates/edit_item.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Item</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+        <h2 class="text-2xl font-semibold mb-4">Edit Item</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-4">
+                <label class="block font-medium">Item Name</label>
+                <input type="text" name="item_name" value="{{ item.name }}" class="w-full border p-2 rounded" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium">Item Type</label>
+                <input type="text" name="item_type" value="{{ item.type }}" class="w-full border p-2 rounded" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium">Price</label>
+                <input type="number" name="price" value="{{ item.price }}" class="w-full border p-2 rounded" required>
+            </div>
+            <div class="mb-4">
+                <label class="block font-medium">Current Image</label><br>
+                <img src="{{ item.image_url }}" class="h-32 mb-2">
+                <input type="file" name="image" class="w-full border p-2 rounded">
+            </div>
+            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Update</button>
+            <a href="/seller-dashboard" class="ml-4 text-gray-600">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

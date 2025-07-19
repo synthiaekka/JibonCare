@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify OTP - HaatExpress</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e6e6fa 0%, #faf7fd 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: #fff;
+            padding: 36px 28px;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(95, 55, 183, 0.08);
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 {
+            color: #6c47aa;
+        }
+        label {
+            display: block;
+            text-align: left;
+            color: #5f37b7;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #dad2f3;
+            border-radius: 7px;
+            margin-bottom: 18px;
+        }
+        button {
+            width: 100%;
+            padding: 11px;
+            font-size: 1rem;
+            background: #7f58e7;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+        button:hover {
+            background: #5f37b7;
+        }
+        .info {
+            color: #7e67c9;
+            font-size: 14px;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>OTP Verification</h2>
+        <form method="POST">
+            <label for="otp">Enter the 6-digit OTP sent to your email:</label>
+            <input type="text" name="otp" id="otp" maxlength="6" autocomplete="off" required pattern="\d{6}">
+            <button type="submit">Verify OTP</button>
+        </form>
+        <div class="info">
+            Check your email for the verification code.
+        </div>
+    </div>
+</body>
+</html>

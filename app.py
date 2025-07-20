@@ -117,7 +117,16 @@ def login():
             session['user'] = user['email']
             session['role'] = user['role']
             #return redirect('/admin-dashboard' if user['role'] == 'admin' else '/dashboard')
-            return redirect('/admin-dashboard') if user['role'] == 'admin' else redirect('/')
+            #return redirect('/admin-dashboard') if user['role'] == 'admin' else redirect('/')
+            # Route based on role
+            if user['role'] == 'admin':
+                return redirect('/admin-dashboard')
+            elif user['role'] == 'seller':
+                return redirect('/seller/dashboard')
+            elif user['role'] == 'customer':
+                return redirect('/customer-dashboard')
+            else:
+                return "Unknown role"
         return render_template("login.html", error="Invalid credentials.")
     return render_template("login.html")
 

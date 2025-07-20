@@ -24,7 +24,7 @@ app.secret_key = os.getenv("SECRET_KEY") or 'SUPER_SECRET_KEY'
 MONGO_URI = "mongodb+srv://Synthia:3sx1zTjPh9HWcwnn@haatexpress.rgonj6q.mongodb.net/?retryWrites=true&w=majority&appName=haatexpress"
 #client = MongoClient(MONGO_URI)
 client = MongoClient(MONGO_URI)
-db = client["haatexpress"]
+db = client["haatExpress"]
 users = db["users"]
 sellers = db["sellers"]
 items = db["items"]

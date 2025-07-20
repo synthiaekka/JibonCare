@@ -20,9 +20,11 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY") or 'SUPER_SECRET_KEY'
 
 # MongoDB setup
-MONGO_URI = os.getenv("MONGO_URI")
+#MONGO_URI = os.getenv("MONGO_URI")
+MONGO_URI = "mongodb+srv://Synthia:3sx1zTjPh9HWcwnn@haatexpress.rgonj6q.mongodb.net/?retryWrites=true&w=majority&appName=haatexpress"
+#client = MongoClient(MONGO_URI)
 client = MongoClient(MONGO_URI)
-db = client["haatExpress"]
+db = client["haatexpress"]
 users = db["users"]
 sellers = db["sellers"]
 items = db["items"]

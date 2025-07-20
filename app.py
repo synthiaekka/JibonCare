@@ -114,7 +114,8 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['user'] = user['email']
             session['role'] = user['role']
-            return redirect('/admin-dashboard' if user['role'] == 'admin' else '/dashboard')
+            #return redirect('/admin-dashboard' if user['role'] == 'admin' else '/dashboard')
+            return redirect('/admin-dashboard') if user['role'] == 'admin' else redirect('/')
         return render_template("login.html", error="Invalid credentials.")
     return render_template("login.html")
 
@@ -355,6 +356,21 @@ def debug_uri():
 def logout():
     session.clear()
     return redirect('/')
+
+@app.context_processor
+def inject_user():
+    user_email = session.get('user')
+    user_data = None
+    if user_email:
+        user_data = users.find_one({'email': user_email})
+    return {
+        'user_email': user_email,
+        'user_name': user_data['full_name'] if user_data else None
+    }
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

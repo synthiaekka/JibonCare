@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -97,12 +97,12 @@
       <button type="submit">Login</button>
     </form>
 
-    <!-- Google Sign-In Button -->
+    <!-- Google Sign-In Button 
     <div class="social-login">
      
     <!-- Or fallback text link, if image is not present:
     <p class="social-login"><a href="{{ url_for('google_login') }}">Continue with Google</a></p>
-    -->
+    -
 
     <p style="margin:14px 0 2px 0;">
       <a href="/forgot-password">Forgot Password?</a>
@@ -112,5 +112,178 @@
       <a href="/register">Register here</a>
     </p>
   </div>
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - HaatXpress</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #44315d, #522c54, #372a45);
+    }
+
+    header {
+      background-color: #372a45;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      width: 60px;
+      height: 60px;
+      margin-right: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #522c54;
+      min-width: 160px;
+      top: 100%;
+      left: 0;
+      box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 10px;
+      color: white;
+      text-decoration: none;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .login-container {
+      max-width: 400px;
+      margin: 80px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    }
+
+    .login-container h2 {
+      text-align: center;
+      color: #522c54;
+    }
+
+    .login-container label {
+      display: block;
+      margin-top: 15px;
+      color: #372a45;
+    }
+
+    .login-container input[type="email"],
+    .login-container input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .login-container button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #7f58e7;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .login-container .bottom-links {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .login-container .bottom-links a {
+      color: #6a8973;
+      text-decoration: none;
+    }
+
+  </style>
+</head>
+
+<body>
+  <!-- Header copied from updated index.html -->
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/jiboncare_Logo.png') }}" alt="HaatXpress Logo">
+    </div>
+
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <div class="dropdown">
+        <a href="#">Choose Store</a>
+        <div class="dropdown-content">
+          <a href="#" onclick="filterCategory('grocery')">Grocery</a>
+          <a href="#" onclick="filterCategory('medicine')">Medicine</a>
+          <a href="#" onclick="filterCategory('food-item')">Restaurant</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Box -->
+  <div class="login-container">
+    <h2>Login to HaatXpress</h2>
+    <form method="POST" action="/login">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Enter your email" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required />
+
+      <button type="submit">Login</button>
+
+      <div class="bottom-links">
+        <p><a href="/forgot-password">Forgot Password?</a></p>
+        <p>Don't have an account? <a href="/register">Register here</a></p>
+      </div>
+    </form>
+  </div>
+
 </body>
 </html>

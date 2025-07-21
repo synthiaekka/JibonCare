@@ -8,12 +8,12 @@
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, #44315d, #522c54, #372a45);
-      min-height: 100vh;
+      <!--background: linear-gradient(to right, #44315d, #522c54, #372a45);-->
+      background: #fafafa      min-height: 100vh;
       margin: 0; padding: 0;
     }
     header {
-      background-color: #372a45;
+      background-color: #400d2e;
       color: white;
       display: flex;
       justify-content: space-between;
@@ -36,11 +36,11 @@
     .category-dropdown:focus { box-shadow:0 0 0 3px #a087e6;}
     .search-bar { display: flex; align-items: center;}
     .search-bar input { padding: 8px 12px; border-radius: 10px 0 0 10px; border: none; font-size: 14px;}
-    .search-bar button { padding: 8px 12px; background-color: #6a8973; color: white; border: none; border-radius: 0 10px 10px 0; cursor: pointer;}
+    .search-bar button { padding: 8px 12px; background-color: #ae3e63; color: white; border: none; border-radius: 0 10px 10px 0; cursor: pointer;}
     .auth-cart { display: flex; align-items: center; gap: 20px; }
     .auth-cart a, .auth-cart span { color: white; text-decoration: none; font-weight: 500; }
     .hero {
-      text-align: center; color: white;
+      text-align: center; color: #0b0b0b;
       padding: 60px 20px 38px 20px;
       text-shadow: 0 6px 14px #18182892;
     }
@@ -52,7 +52,7 @@
 }
 
 .nav-links a {
-  color: white;
+  color: #fafafa;
   text-decoration: none;
   font-weight: 500;
 }
@@ -64,7 +64,7 @@
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #522c54;
+  background-color: #ae3e63;
   min-width: 160px;
   top: 100%;
   left: 0;
@@ -84,7 +84,7 @@
 }
 
     .hero h2 { font-size: 2.4rem; letter-spacing:0.2ch; }
-    .hero p { font-size: 1.13rem; max-width: 600px; margin: auto; color: #dad7ec; letter-spacing:0.02ch; }
+    .hero p { font-size: 1.13rem; max-width: 600px; margin: auto; color: #0b0b0b; letter-spacing:0.02ch; }
     .store-section {
       display: flex; flex-wrap: wrap; justify-content: center;
       padding: 40px  3vw; gap: 33px;
@@ -103,7 +103,7 @@
       background: linear-gradient(135deg, #706eb2 68%, #7a4bc4 100%);
       box-shadow: 0 13px 35px #221330a0, 0 4px 0 #fff4;
       transform: translateY(-7px) scale(1.055) rotate(-1deg);
-      border-color:#34efcc;
+      border-color:#ae3e63;
     }
     .store-card img {
       width:70px; height:70px;
@@ -111,7 +111,7 @@
     }
     .store-card h3 { margin:10px 0 6px 0; font-size: 1.18em; font-weight:700; letter-spacing:.01em;}
     .category-badge {
-      display:inline-block; border-radius:9px; font-size:13px; color:#223146; background:#a6fff8;
+      display:inline-block; border-radius:9px; font-size:13px; color:#223146; background:#fafafa;
       padding:2.5px 12px; margin-bottom:7px; font-weight:500; box-shadow:0 1.5px 0 #c6fff9;
     }
     .store-dist {font-size: 12px; color: #b6d8ff; margin: 5px;}
@@ -120,14 +120,14 @@
       box-shadow:0 6px 38px #3b1f5060;
     }
     .modal.active { display: block; }
-    .modal-close { float: right; background: #6a8973; border: none; padding:10px 19px; border-radius: 5px; color: white; cursor: pointer;}
+    .modal-close { float: right; background: #ae3e63; border: none; padding:10px 19px; border-radius: 5px; color: white; cursor: pointer;}
     .modal ul { margin:35px 0 0 0; padding:0; list-style:none;}
     .modal li { margin:13px 0; padding:7px 0 7px 12px; border-radius:8px; background:#534160; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2.5px 10px #6288661a;}
-    .modal li button { padding:4px 13px; background: #9be58a; color:#372a45; border:none; border-radius:8px; cursor:pointer; font-weight:bold;}
-    .modal li button:hover { background:#7f58e7; color:#fff;}
+    .modal li button { padding:4px 13px; background: #AD5E78FF; color:#372a45; border:none; border-radius:8px; cursor:pointer; font-weight:bold;}
+    .modal li button:hover { background:#fafafa; color:#0b0b0b;}
     .modal h2 { margin-bottom: 7px;}
     #total-price {margin-top:15px; font-size:1.01em;}
-    footer { background-color: #251c30; color: #c4b7a6; text-align: center; padding: 20px;}
+    footer { background-color: #0b0b0b; color: #fafafa; text-align: center; padding: 20px;}
     .login-modal { display: none; position: fixed; left: 0; right: 0; top: 0; bottom: 0; width: 100vw; height: 100vh; background: rgba(40,21,64,0.80); z-index: 3000; text-align: center; color: #fff; min-height: 0; justify-content: center; align-items: center;}
     .login-modal.active { display: flex; flex-direction: column; align-items: center; justify-content: center; animation: fadein .27s; }
     @keyframes fadein { from { opacity: 0; } to   { opacity: 1; } }
@@ -214,11 +214,11 @@
     <!-- NAVIGATION LINKS -->
 <div class="nav-main">
   <div class="nav-links">
-    <a href="/" style="color: white; text-decoration: none; font-weight: 500;">Home</a>
+    <a href="/" style="color: #fafafa; text-decoration: none; font-weight: 500;">Home</a>
     <a href="/about" style="color: white; text-decoration: none; font-weight: 500;">About</a>
 
     <div class="dropdown">
-      <a href="#" style="color: white; text-decoration: none; font-weight: 500;">Choose Store</a>
+      <a href="#" style="color: #fafafa; text-decoration: none; font-weight: 500;">Choose Store</a>
       <div class="dropdown-content">
         <a href="#" onclick="filterCategory('grocery')">Grocery</a>
         <a href="#" onclick="filterCategory('medicine')">Medicine</a>
@@ -343,7 +343,7 @@ function detectLocation() {
       function(pos) {
         USER_LAT = pos.coords.latitude;
         USER_LNG = pos.coords.longitude;
-        document.getElementById('location-text').innerText = `Lat: ${USER_LAT.toFixed(4)}, Lng: ${USER_LNG.toFixed(4)}`;
+        document.getElementById('location-text').innerText = Lat: ${USER_LAT.toFixed(4)}, Lng: ${USER_LNG.toFixed(4)};
         loadShops();
       },
       function(err) {
@@ -394,7 +394,7 @@ function displayShops(shoplist) {
       || (s.matching_products && s.matching_products.join(' | ').toLowerCase().includes(text))
     )) continue; // frontend filter for shop name/address/search combo
 
-    html += `
+    html += 
       <div class="store-card"
         data-name="${(s.shop_name||'') + ' ' + (s.shop_address||'') + ' ' + (s.shop_contact||'')}"
         onclick="showShopProducts('${s.email.replace(/'/g,"&#39;")}', '${(s.shop_name||'Store').replace(/'/g,"&#39;")}')">
@@ -405,12 +405,12 @@ function displayShops(shoplist) {
         <h3>${s.shop_name || 'Unnamed Shop'}</h3>
         <div style='font-size:13px; color:#c1f6b3; margin-bottom:8px;'>${s.shop_contact || ''}</div>
         <div style='font-size:13px; color:#dedede;'>${s.shop_address || ''}</div>
-        ${s.distance_km !== undefined ? `<div class="store-dist">Distance: ${s.distance_km} km</div>` : ""}
+        ${s.distance_km !== undefined ? <div class="store-dist">Distance: ${s.distance_km} km</div> : ""}
         ${s.matching_products && s.matching_products.length
-           ? `<div style="margin-top:7px;color:#a6fff8;font-size:13px;"><b>Matched products:</b> ${s.matching_products.join(', ')}</div>`
+           ? <div style="margin-top:7px;color:#a6fff8;font-size:13px;"><b>Matched products:</b> ${s.matching_products.join(', ')}</div>
            : ""}
       </div>
-    `;
+    ;
   }
   document.getElementById('store-list').innerHTML = html || '<div style="color:white;">No shops found for search or filters.</div>';
 }
@@ -421,10 +421,10 @@ function triggerSmartSearch() {
   if (!text) { loadShops(); return; }
 
   let cat = CATEGORY || document.getElementById('categorySelect').value;
-  let url = `/customer/search-shops-by-product?query=${encodeURIComponent(text)}`;
-  if(cat) url += `&category=${encodeURIComponent(cat)}`;
+  let url = /customer/search-shops-by-product?query=${encodeURIComponent(text)};
+  if(cat) url += &category=${encodeURIComponent(cat)};
   if (USER_LAT !== null && USER_LNG !== null)
-    url += `&lat=${USER_LAT}&lng=${USER_LNG}`;
+    url += &lat=${USER_LAT}&lng=${USER_LNG};
 
   fetch(url)
     .then(res => res.json())
@@ -456,8 +456,8 @@ function filterCategory(category) {
 function showShopProducts(shop_email, shop_name) {
   document.getElementById('modal').classList.add('active');
   document.getElementById('modal-title').innerText = shop_name;
-  document.getElementById('total-price').innerText = `Total: ₹${total}`;
-  fetch(`/customer/products/${encodeURIComponent(shop_email)}`)
+  document.getElementById('total-price').innerText = Total: ₹${total};
+  fetch(/customer/products/${encodeURIComponent(shop_email)})
     .then(res=>res.json())
     .then(products => {
       let ul = document.getElementById('product-list');
@@ -468,8 +468,8 @@ function showShopProducts(shop_email, shop_name) {
       }
       for (const p of products) {
         let li = document.createElement('li');
-        li.innerHTML = `<span>${p.name} <b>- ₹${p.price}</b> <span style="color:#eee;font-size:12px;">(${p.type})</span></span>
-          <button onclick="event.stopPropagation();addToCart('${p.name.replace(/'/g,"&#39;")}', ${+p.price});">Add to Cart</button>`;
+        li.innerHTML = <span>${p.name} <b>- ₹${p.price}</b> <span style="color:#eee;font-size:12px;">(${p.type})</span></span>
+          <button onclick="event.stopPropagation();addToCart('${p.name.replace(/'/g,"&#39;")}', ${+p.price});">Add to Cart</button>;
         ul.appendChild(li);
       }
     });
@@ -490,7 +490,7 @@ function addToCart(name, price) {
   cart.push({ name, price });
   total += price;
   document.getElementById('cart-count').innerText = cart.length;
-  document.getElementById('total-price').innerText = `Total: ₹${total}`;
+  document.getElementById('total-price').innerText = Total: ₹${total};
 }
 function showLoginModal() {
   document.getElementById('loginModal').classList.add('active');
@@ -522,7 +522,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const lon = position.coords.longitude;
 
       try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+        const response = await fetch(https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json);
         if (!response.ok) throw new Error("Failed to fetch location");
 
         const data = await response.json();
@@ -538,7 +538,7 @@ document.addEventListener("DOMContentLoaded", () => {
           data.address.state;
 
         const country = data.address.country || "";
-        locationSpan.innerText = `${place ? place + ", " : ""}${country}`;
+        locationSpan.innerText = ${place ? place + ", " : ""}${country};
       } catch (error) {
         console.error("Reverse geocoding failed:", error);
         locationSpan.innerText = "Location unavailable";

@@ -314,6 +314,70 @@ window.onload = function() {
   detectLocation();
   document.getElementById('categorySelect').value = "";
 };
+<<<<<<< HEAD
+=======
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const locationSpan = document.getElementById("location-text");
+
+  // Check for geolocation support
+  if (!navigator.geolocation) {
+    locationSpan.innerText = "Geolocation not supported";
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+        if (!response.ok) throw new Error("Failed to fetch location");
+
+        const data = await response.json();
+
+        const place =
+          data.address.city ||
+          data.address.town ||
+          data.address.village ||
+          data.address.hamlet ||
+          data.address.suburb ||
+          data.address.county ||
+          data.address.state_district ||
+          data.address.state;
+
+        const country = data.address.country || "";
+        locationSpan.innerText = `${place ? place + ", " : ""}${country}`;
+      } catch (error) {
+        console.error("Reverse geocoding failed:", error);
+        locationSpan.innerText = "Location unavailable";
+      }
+    },
+    (error) => {
+      console.error("Geolocation failed:", error);
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          locationSpan.innerText = "Permission denied";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          locationSpan.innerText = "Location unavailable";
+          break;
+        case error.TIMEOUT:
+          locationSpan.innerText = "Timeout getting location";
+          break;
+        default:
+          locationSpan.innerText = "Location detection error";
+      }
+    }
+  );
+});
+
+
+
+
+>>>>>>> 58c02eaa6b745160eb13a4f2bc7788b8ac272608
 </script>
 </body>
 </html>

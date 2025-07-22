@@ -9,9 +9,14 @@ from flask_mail import Mail, Message
 from requests_oauthlib import OAuth2Session
 from datetime import datetime
 from bson import ObjectId
+from dotenv import load_dotenv
+load_dotenv()
 
 from seller import init_seller_routes
 from customer import init_customer_routes
+from delivery import init_delivery_routes
+
+      # import your delivery initializer
 
 # Load environment variables
 load_dotenv()
@@ -20,9 +25,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY") or 'SUPER_SECRET_KEY'
 
 # MongoDB setup
-#MONGO_URI = os.getenv("MONGO_URI")
-MONGO_URI = "mongodb+srv://Synthia:3sx1zTjPh9HWcwnn@haatexpress.rgonj6q.mongodb.net/?retryWrites=true&w=majority&appName=haatexpress"
-#client = MongoClient(MONGO_URI)
+MONGO_URI = os.getenv("MONGO_URI") or "mongodb+srv://Synthia:3sx1zTjPh9HWcwnn@haatexpress.rgonj6q.mongodb.net/?retryWrites=true&w=majority&appName=haatexpress"
 client = MongoClient(MONGO_URI)
 db = client["haatExpress"]
 users = db["users"]
@@ -39,15 +42,16 @@ app.config['MAIL_USE_TLS'] = os.getenv("MAIL_USE_TLS", "True") == 'True'
 app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME", "rchoudhury0522@gmail.com")
 app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
 app.config['MAIL_DEFAULT_SENDER'] = app.config['MAIL_USERNAME']
-ADMIN_EMAIL = app.config['MAIL_USERNAME']  # Always send as this!
+ADMIN_EMAIL = app.config['MAIL_USERNAME']
 app.config['ADMIN_EMAIL'] = ADMIN_EMAIL
 mail = Mail(app)
 
+# Upload folder
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# ---- GOOGLE OAUTH (with JSON credentials) ----
+# GOOGLE OAUTH2
 with open("client_secret.json") as f:
     google_creds = json.load(f)["web"]
 
@@ -56,6 +60,7 @@ GOOGLE_CLIENT_SECRET = google_creds["client_secret"]
 GOOGLE_AUTHORIZATION_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v1/userinfo"
+
 
 @app.route('/')
 def home():
@@ -116,8 +121,6 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['user'] = user['email']
             session['role'] = user['role']
-            #return redirect('/admin-dashboard' if user['role'] == 'admin' else '/dashboard')
-            #return redirect('/admin-dashboard') if user['role'] == 'admin' else redirect('/')
             # Route based on role
             if user['role'] == 'admin':
                 return redirect('/admin-dashboard')
@@ -125,6 +128,8 @@ def login():
                 return redirect('/seller/dashboard')
             elif user['role'] == 'customer':
                 return redirect('/customer-dashboard')
+            elif user['role'] == 'delivery':
+                return redirect('/delivery-dashboard')
             else:
                 return "Unknown role"
         return render_template("login.html", error="Invalid credentials.")
@@ -161,7 +166,6 @@ def google_callback():
     userinfo = google.get(GOOGLE_USER_INFO_URL).json()
     email = userinfo.get("email")
     name = userinfo.get("name", "")
-
     user = users.find_one({"email": email})
     if not user:
         users.insert_one({
@@ -174,7 +178,16 @@ def google_callback():
 
     session['user'] = email
     session['role'] = user['role']
-    return redirect('/admin-dashboard' if user['role'] == 'admin' else '/dashboard')
+    if user['role'] == 'admin':
+        return redirect('/admin-dashboard')
+    elif user['role'] == 'seller':
+        return redirect('/seller/dashboard')
+    elif user['role'] == 'customer':
+        return redirect('/customer-dashboard')
+    elif user['role'] == 'delivery':
+        return redirect('/delivery-dashboard')
+    else:
+        return redirect('/')
 
 # ---- PASSWORD RESET ----
 @app.route('/forgot-password', methods=['GET', 'POST'])
@@ -221,7 +234,7 @@ def set_new_password():
             return render_template("set_new_password.html", error="Passwords do not match.")
         hashed = generate_password_hash(pw)
         users.update_one({"email": session['reset_email']},
-                        {"$set": {"password": hashed}})
+                         {"$set": {"password": hashed}})
         session.pop('reset_email', None)
         session.pop('reset_otp', None)
         session.pop('otp_verified', None)
@@ -239,6 +252,8 @@ def dashboard():
             return redirect('/customer-dashboard')
         elif role == 'delivery':
             return redirect('/delivery-dashboard')
+        elif role == 'admin':
+            return redirect('/admin-dashboard')
         else:
             return "Unknown role"
     return redirect('/login')
@@ -294,25 +309,22 @@ def admin_mark_order_paid(order_id):
         )
     return redirect('/admin-dashboard')
 
-# ---- FIXED ADMIN NOTICE ROUTE ----
 @app.route('/admin/post-notice', methods=['POST'])
 def post_notice():
     if 'user' not in session or session.get('role') != 'admin':
         return redirect('/login')
     notice_msg = request.form['message'].strip()
-    target_email = request.form.get('target_email', 'all')  # "all" or one seller's email
+    target_email = request.form.get('target_email', 'all') # "all" or one seller's email
 
     notice_doc = {
         "notice": notice_msg,
-        "to": target_email,  # either "all" or email
+        "to": target_email,
         "from_admin_email": app.config['MAIL_USERNAME'] or "rchoudhury0522@gmail.com",
         "timestamp": datetime.now()
     }
-    # Always insert into Mongo first
     notices.insert_one(notice_doc)
     try:
         if target_email and target_email != "all":
-            # Email only this seller
             user = users.find_one({"email": target_email})
             if user:
                 msg = Message(
@@ -323,7 +335,6 @@ def post_notice():
                 )
                 mail.send(msg)
         else:
-            # Email ALL sellers
             seller_emails = [s['email'] for s in users.find({"role": "seller"})]
             for email in seller_emails:
                 msg = Message(
@@ -335,7 +346,6 @@ def post_notice():
                 mail.send(msg)
     except Exception as e:
         return f"Failed to send notice/email: {str(e)}", 500
-
     return redirect('/admin-dashboard')
 
 @app.route('/admin/remove-seller/<email>', methods=['POST'])
@@ -352,12 +362,7 @@ def admin_remove_seller(email):
 # ---- SELLER and CUSTOMER ROUTES ----
 init_seller_routes(app, db, mail=mail, admin_email=ADMIN_EMAIL)
 init_customer_routes(app, db, mail=mail, admin_email=ADMIN_EMAIL)
-
-@app.route('/delivery-dashboard')
-def delivery_dashboard():
-    if 'user' in session and session.get('role') == 'delivery':
-        return f"Welcome delivery partner: {session['user']}"
-    return redirect('/login')
+init_delivery_routes(app, db)  # DELIVERY ROUTES - THIS ADDS/REGISTERS THE delivery_bp blueprint
 
 @app.route("/debug-uri")
 def debug_uri():
@@ -378,10 +383,6 @@ def inject_user():
         'user_email': user_email,
         'user_name': user_data['full_name'] if user_data else None
     }
-
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)

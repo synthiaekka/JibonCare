@@ -36,15 +36,16 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
     sellers_col = db['sellers']
     items_col = db['items']
     orders_col = db['orders']
+    delivery_col = db['delivery_partners']
 
-    # Customer dashboard view (requires login, customer role)
+    # -------- Customer dashboard --------
     @customer_bp.route('/customer-dashboard')
     def customer_dashboard():
         if 'user' not in session or session.get('role') != 'customer':
             return redirect('/login')
         return render_template('customer.html', user_email=session.get('user'))
 
-    # Shops API with category and location filtering
+    # -------- Shops API (optional location/category filtering) --------
     @customer_bp.route('/customer/shops')
     def customer_shops():
         category = request.args.get("category")
@@ -82,7 +83,7 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
             shop["_id"] = str(shop["_id"])
         return jsonify(shoplist)
 
-    # Products for a shop
+    # -------- Products for a shop --------
     @customer_bp.route('/customer/products/<shop_email>')
     def customer_products(shop_email):
         products = list(items_col.find({"seller_email": shop_email}))
@@ -90,7 +91,7 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
             p["_id"] = str(p["_id"])
         return jsonify(products)
 
-    # -------- KEY SEARCH FIX: SHOW ALL SHOPS THAT HAVE THE PRODUCT ---------
+    # -------- Search all shops with a matching product --------
     @customer_bp.route('/customer/search-shops-by-product')
     def search_shops_by_product():
         query_text = request.args.get('query', '').strip()
@@ -119,7 +120,7 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
         if not seller_emails:
             return jsonify([])
 
-        # 3. Find all shops which sell the item (no shop category restriction)
+        # 3. Find all shops which sell the item
         shop_query = {"email": {"$in": seller_emails}}
         projection = {
             "shop_name": 1,
@@ -133,7 +134,7 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
         }
         shoplist = list(sellers_col.find(shop_query, projection))
 
-        # 4. (Optional) Filter by 5km radius from user if lat/lng provided
+        # 4. Optional: Filter by 5km radius from user if lat/lng provided
         if user_lat is not None and user_lng is not None:
             filtered = []
             for shop in shoplist:
@@ -154,7 +155,7 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
 
         return jsonify(shoplist)
 
-    # ========== CUSTOMER: MY ORDERS ==========
+    # -------- Customer's own orders --------
     @customer_bp.route('/customer/my-orders')
     def my_orders():
         if 'user' not in session or session.get('role') != 'customer':
@@ -165,7 +166,7 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
             o["_id"] = str(o["_id"])
         return render_template("my_orders.html", orders=orders, user_email=email)
 
-    # ========== PLACE ORDER ==========
+    # -------- Place an order --------
     @customer_bp.route('/customer/place-order', methods=['POST'])
     def place_order():
         if 'user' not in session or session.get('role') != 'customer':
@@ -174,19 +175,57 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
         data['customer_email'] = session.get('user')
         data['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         data['paid_status'] = 'pending'
-        orders_col.insert_one(data)
+
+        # Find shop lat/lng for order and for delivery notification
+        shop_doc = sellers_col.find_one({'email': data.get('shop_email')})
+        shop_lat, shop_lng = None, None
+        if shop_doc:
+            shop_lat = shop_doc.get('lat')
+            shop_lng = shop_doc.get('lng')
+            # Add shop coordinates to order's location for delivery logic
+            if shop_lat is not None and shop_lng is not None:
+                data["location"] = {"lat": shop_lat, "lng": shop_lng}
+
+        inserted = orders_col.insert_one(data)
 
         # ---- EMAIL LOGIC ----
-        if mail:
-            # find seller's email (shop_email passed from frontend order POST)
-            shop_doc = sellers_col.find_one({'email': data['shop_email']})
-            seller_email = shop_doc.get('email') if shop_doc else None
-            recipients = []
-            if seller_email: recipients.append(seller_email)
-            if admin_email: recipients.append(admin_email)
-            # Compose email
-            email_body = format_order_email(data)
-            subject = f"Order Placed on HaatExpress: {data.get('shop_name','(Shop)')}"
+        recipients = []
+
+        # Notify seller
+        seller_email = shop_doc.get('email') if shop_doc else None
+        if seller_email:
+            recipients.append(seller_email)
+        # Notify admin
+        if admin_email:
+            recipients.append(admin_email)
+
+        # --- Find & notify nearby delivery partners ---
+        delivery_emails = []
+        if shop_lat is not None and shop_lng is not None:
+            delivery_partners = delivery_col.find({
+                "current_lat": {"$ne": None},
+                "current_lng": {"$ne": None}
+            })
+            for partner in delivery_partners:
+                plat = partner.get("current_lat")
+                plng = partner.get("current_lng")
+                if plat is not None and plng is not None:
+                    dist = haversine(float(shop_lat), float(shop_lng), float(plat), float(plng))
+                    if dist <= 5:
+                        pemail = partner.get("email")
+                        if pemail and pemail not in recipients:
+                            delivery_emails.append(pemail)
+        else:
+            # If shop does not have coordinates, notify all delivery partners
+            delivery_emails = [p["email"] for p in delivery_col.find() if p.get("email") and p["email"] not in recipients]
+
+        # Add only new delivery partner emails not already in recipients
+        recipients += [e for e in delivery_emails if e not in recipients]
+
+        # Send email to all recipients
+        email_body = format_order_email(data)
+        subject = f"Order Placed on HaatExpress: {data.get('shop_name','(Shop)')}"
+        if mail and recipients:
             try:
                 msg = Message(subject, recipients=recipients, body=email_body)
                 mail.send(msg)

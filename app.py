@@ -14,7 +14,6 @@ from twilio.rest import Client
 # Load environment variables
 load_dotenv()
 
-# Import your blueprints (ensure these exist and are correct)
 from seller import init_seller_routes
 from customer import init_customer_routes
 from delivery import init_delivery_routes
@@ -47,11 +46,11 @@ ADMIN_EMAIL = app.config['MAIL_USERNAME']
 app.config['ADMIN_EMAIL'] = ADMIN_EMAIL
 mail = Mail(app)
 
-# Twilio config
+# Twilio client setup
 TWILIO_SID = os.getenv("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER", "+918453327570")
-twilio_client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN) if TWILIO_SID and TWILIO_AUTH_TOKEN else None
+twilio_client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
 
 # Upload folder
 UPLOAD_FOLDER = 'static/uploads'
@@ -68,6 +67,7 @@ GOOGLE_AUTHORIZATION_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v1/userinfo"
 
+
 # Helper to create UPI payment URI with fixed merchant UPI ID
 def create_upi_uri(amount):
     merchant_upi = "richachoudhury478-2@okaxis"
@@ -82,6 +82,7 @@ def create_upi_uri(amount):
     }
     param_str = '&'.join(f"{key}={quote_plus(str(value))}" for key, value in params.items())
     return f"upi://pay?{param_str}"
+
 
 # Helper to send payment request email with a PAY NOW button
 def send_payment_email(to_email, order):
@@ -122,6 +123,7 @@ def send_payment_email(to_email, order):
         app.logger.error(f"Failed to send email to {to_email}: {e}")
         return False
 
+
 # Helper to send SMS payment request with UPI URI and details
 def send_payment_sms(to_phone, order):
     try:
@@ -144,7 +146,8 @@ def send_payment_sms(to_phone, order):
         app.logger.error(f"Failed to send SMS to {to_phone}: {e}")
         return False
 
-# Your existing user routes and APIs (register, login, password reset, etc.)
+
+# Existing user routes and APIs (register, login, password reset, etc.) — as you originally provided
 @app.route('/')
 def home():
     return render_template("index.html")
@@ -526,6 +529,7 @@ def inject_user():
         'user_name': user_data['full_name'] if user_data else None
     }
 
+
 # Notify merchant endpoint — send payment notification email and sms
 @app.route('/notify-merchant', methods=['POST'])
 def notify_merchant():
@@ -558,5 +562,3 @@ def notify_merchant():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-

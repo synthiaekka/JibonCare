@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, session, redirect, jsonify, reques
 from math import radians, cos, sin, sqrt, atan2
 from flask_mail import Message
 from datetime import datetime
+from bson import ObjectId
+
 
 def haversine(lat1, lng1, lat2, lng2):
     R = 6371.0
@@ -12,24 +14,29 @@ def haversine(lat1, lng1, lat2, lng2):
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c  # distance in km
 
+
 def format_order_email(order):
     items = "\n".join(
         [f"- {item['name']} ×1 @ ₹{item['price']}" for item in order.get("items", [])]
     )
     return f"""New Order Placed!
 
+
 Shop: {order.get("shop_name", "-")}
 Customer: {order.get("name", "-")}
 Phone: {order.get("phone", "-")}
 Address: {order.get("address", "-")}
 
+
 Order Items:
 {items}
+
 
 Total: ₹{order.get("total", "--")}
 Payment: {order.get("payment", "--")}
 Order Time: {order.get("timestamp", "-")}
 """
+
 
 def init_customer_routes(app, db, mail=None, admin_email=None):
     customer_bp = Blueprint('customer', __name__)
@@ -38,6 +45,7 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
     orders_col = db['orders']
     delivery_col = db['delivery_partners']
 
+
     # -------- Customer dashboard --------
     @customer_bp.route('/customer-dashboard')
     def customer_dashboard():
@@ -45,7 +53,8 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
             return redirect('/login')
         return render_template('customer.html', user_email=session.get('user'))
 
-    # -------- Shops API (optional location/category filtering) --------
+
+    # -------- Shops API with optional location & category filtering --------
     @customer_bp.route('/customer/shops')
     def customer_shops():
         category = request.args.get("category")
@@ -83,7 +92,8 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
             shop["_id"] = str(shop["_id"])
         return jsonify(shoplist)
 
-    # -------- Products for a shop --------
+
+    # -------- Products for a specific shop --------
     @customer_bp.route('/customer/products/<shop_email>')
     def customer_products(shop_email):
         products = list(items_col.find({"seller_email": shop_email}))
@@ -91,24 +101,29 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
             p["_id"] = str(p["_id"])
         return jsonify(products)
 
-    # -------- Search all shops with a matching product --------
+
+    # -------- Search shops by matching product --------
     @customer_bp.route('/customer/search-shops-by-product')
     def search_shops_by_product():
         query_text = request.args.get('query', '').strip()
         user_lat = request.args.get('lat', type=float)
         user_lng = request.args.get('lng', type=float)
 
+
         if not query_text:
             return jsonify([])
 
+
         regex = {"$regex": query_text, "$options": "i"}
 
-        # 1. Find all products whose names match search (case-insensitive)
+
+        # Find matching products by name
         products = list(items_col.find({"name": regex}, {"seller_email": 1, "name": 1}))
         if not products:
             return jsonify([])
 
-        # 2. Map seller_email to product name(s)
+
+        # Map seller email to product names
         shop_to_products = {}
         for item in products:
             email = item.get("seller_email")
@@ -116,11 +131,13 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
             if email and name:
                 shop_to_products.setdefault(email, []).append(name)
 
+
         seller_emails = list(shop_to_products)
         if not seller_emails:
             return jsonify([])
 
-        # 3. Find all shops which sell the item
+
+        # Find shops selling those products
         shop_query = {"email": {"$in": seller_emails}}
         projection = {
             "shop_name": 1,
@@ -134,7 +151,8 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
         }
         shoplist = list(sellers_col.find(shop_query, projection))
 
-        # 4. Optional: Filter by 5km radius from user if lat/lng provided
+
+        # Optional 5km radius filter
         if user_lat is not None and user_lng is not None:
             filtered = []
             for shop in shoplist:
@@ -148,14 +166,17 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
                     filtered.append(shop)
             shoplist = filtered
 
-        # 5. Attach matching products for each shop & string-ify _id
+
+        # Attach matching products & stringify _id
         for shop in shoplist:
             shop["_id"] = str(shop["_id"])
             shop["matching_products"] = shop_to_products.get(shop["email"], [])
 
+
         return jsonify(shoplist)
 
-    # -------- Customer's own orders --------
+
+    # -------- Customer's orders --------
     @customer_bp.route('/customer/my-orders')
     def my_orders():
         if 'user' not in session or session.get('role') != 'customer':
@@ -165,6 +186,7 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
         for o in orders:
             o["_id"] = str(o["_id"])
         return render_template("my_orders.html", orders=orders, user_email=email)
+
 
     # -------- Place an order --------
     @customer_bp.route('/customer/place-order', methods=['POST'])
@@ -176,30 +198,29 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
         data['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         data['paid_status'] = 'pending'
 
-        # Find shop lat/lng for order and for delivery notification
+
+        # Shop lat/lng for delivery notification
         shop_doc = sellers_col.find_one({'email': data.get('shop_email')})
         shop_lat, shop_lng = None, None
         if shop_doc:
             shop_lat = shop_doc.get('lat')
             shop_lng = shop_doc.get('lng')
-            # Add shop coordinates to order's location for delivery logic
             if shop_lat is not None and shop_lng is not None:
                 data["location"] = {"lat": shop_lat, "lng": shop_lng}
 
-        inserted = orders_col.insert_one(data)
 
-        # ---- EMAIL LOGIC ----
+        orders_col.insert_one(data)
+
+
+        # Notify seller, admin and delivery partners
         recipients = []
-
-        # Notify seller
         seller_email = shop_doc.get('email') if shop_doc else None
         if seller_email:
             recipients.append(seller_email)
-        # Notify admin
         if admin_email:
             recipients.append(admin_email)
 
-        # --- Find & notify nearby delivery partners ---
+
         delivery_emails = []
         if shop_lat is not None and shop_lng is not None:
             delivery_partners = delivery_col.find({
@@ -216,13 +237,12 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
                         if pemail and pemail not in recipients:
                             delivery_emails.append(pemail)
         else:
-            # If shop does not have coordinates, notify all delivery partners
             delivery_emails = [p["email"] for p in delivery_col.find() if p.get("email") and p["email"] not in recipients]
 
-        # Add only new delivery partner emails not already in recipients
+
         recipients += [e for e in delivery_emails if e not in recipients]
 
-        # Send email to all recipients
+
         email_body = format_order_email(data)
         subject = f"Order Placed on HaatExpress: {data.get('shop_name','(Shop)')}"
         if mail and recipients:
@@ -232,6 +252,8 @@ def init_customer_routes(app, db, mail=None, admin_email=None):
             except Exception as e:
                 print(f"Failed to send notification: {e}")
 
+
         return jsonify({'success': True, 'message': 'Order placed, notification sent!'})
+
 
     app.register_blueprint(customer_bp)

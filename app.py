@@ -1,7 +1,7 @@
 import os
 import secrets
 import json
-from flask import Flask, render_template, request, redirect, session, flash, url_for
+from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,23 +9,24 @@ from flask_mail import Mail, Message
 from requests_oauthlib import OAuth2Session
 from datetime import datetime
 from bson import ObjectId
-from dotenv import load_dotenv
-load_dotenv()
-
-from seller import init_seller_routes
-from customer import init_customer_routes
-from delivery import init_delivery_routes
-
-      # import your delivery initializer
+from twilio.rest import Client
 
 # Load environment variables
 load_dotenv()
+
+# Import your blueprints (ensure these exist and are correct)
+from seller import init_seller_routes
+from customer import init_customer_routes
+from delivery import init_delivery_routes
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY") or 'SUPER_SECRET_KEY'
 
 # MongoDB setup
-MONGO_URI = os.getenv("MONGO_URI") or "mongodb+srv://Synthia:3sx1zTjPh9HWcwnn@haatexpress.rgonj6q.mongodb.net/?retryWrites=true&w=majority&appName=haatexpress"
+MONGO_URI = os.getenv("MONGO_URI") or (
+    "mongodb+srv://Synthia:3sx1zTjPh9HWcwnn@haatexpress.rgonj6q.mongodb.net/"
+    "?retryWrites=true&w=majority&appName=haatexpress"
+)
 client = MongoClient(MONGO_URI)
 db = client["haatExpress"]
 users = db["users"]
@@ -46,12 +47,18 @@ ADMIN_EMAIL = app.config['MAIL_USERNAME']
 app.config['ADMIN_EMAIL'] = ADMIN_EMAIL
 mail = Mail(app)
 
+# Twilio config
+TWILIO_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER", "+918453327570")
+twilio_client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN) if TWILIO_SID and TWILIO_AUTH_TOKEN else None
+
 # Upload folder
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# GOOGLE OAUTH2
+# GOOGLE OAUTH2 Credentials
 with open("client_secret.json") as f:
     google_creds = json.load(f)["web"]
 
@@ -61,10 +68,136 @@ GOOGLE_AUTHORIZATION_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v1/userinfo"
 
+# Helper to create UPI payment URI with fixed merchant UPI ID
+def create_upi_uri(amount):
+    merchant_upi = "richachoudhury478-2@okaxis"
+    payee_name = "HaatXpress"
+    from urllib.parse import quote_plus
+    params = {
+        'pa': merchant_upi,
+        'pn': payee_name,
+        'am': f'{amount:.2f}',
+        'cu': 'INR',
+        'tn': 'HaatXpress Order Payment'
+    }
+    param_str = '&'.join(f"{key}={quote_plus(str(value))}" for key, value in params.items())
+    return f"upi://pay?{param_str}"
 
+# Helper to send payment request email with a PAY NOW button
+def send_payment_email(to_email, order):
+    try:
+        upi_uri = create_upi_uri(order.get("total", 0))
+        html_body = f"""
+        <p>Dear Customer,</p>
+        <p>You have a payment request for your recent order:</p>
+        <ul>
+            <li><b>Shop:</b> {order.get("shop_name", "")}</li>
+            <li><b>Name:</b> {order.get("name", "")}</li>
+            <li><b>Total Amount:</b> ₹{order.get("total", 0):.2f}</li>
+        </ul>
+        <p>Please complete your payment by clicking the button below:</p>
+        <p style="text-align:center;">
+          <a href="{upi_uri}" style="
+            display:inline-block;
+            padding:12px 24px;
+            font-size:16px;
+            color:#fff;
+            background-color:#4CAF50;
+            text-decoration:none;
+            border-radius:6px;
+          ">PAY NOW</a>
+        </p>
+        <p>Thank you for choosing HaatXpress!</p>
+        """
+        msg = Message(
+            subject="HaatXpress Payment Request",
+            sender=ADMIN_EMAIL,
+            recipients=[to_email]
+        )
+        msg.html = html_body
+        mail.send(msg)
+        app.logger.info(f"Payment email sent to {to_email}")
+        return True
+    except Exception as e:
+        app.logger.error(f"Failed to send email to {to_email}: {e}")
+        return False
+
+# Helper to send SMS payment request with UPI URI and details
+def send_payment_sms(to_phone, order):
+    try:
+        upi_uri = create_upi_uri(order.get("total", 0))
+        message_body = (
+            f"HaatXpress Payment Request:\n"
+            f"Shop: {order.get('shop_name', '')}\n"
+            f"Name: {order.get('name', '')}\n"
+            f"Total: ₹{order.get('total', 0):.2f}\n\n"
+            f"Pay now using your UPI app: {upi_uri}"
+        )
+        message = twilio_client.messages.create(
+            body=message_body,
+            from_=TWILIO_PHONE_NUMBER,
+            to=to_phone
+        )
+        app.logger.info(f"SMS sent to {to_phone}, SID: {message.sid}")
+        return True
+    except Exception as e:
+        app.logger.error(f"Failed to send SMS to {to_phone}: {e}")
+        return False
+
+# Your existing user routes and APIs (register, login, password reset, etc.)
 @app.route('/')
 def home():
     return render_template("index.html")
+
+@app.route('/api/shops')
+def api_shops():
+    area = request.args.get('area', '').strip().lower()
+    shops_query = {}
+
+    if area:
+        shops_query = {
+            "$or": [
+                {"shop_address": {"$regex": area, "$options": "i"}},
+                {"shop_district": {"$regex": area, "$options": "i"}},
+                {"shop_pincode": {"$regex": area, "$options": "i"}},
+                {"shop_name": {"$regex": area, "$options": "i"}}
+            ]
+        }
+    shops_cursor = sellers.find(shops_query)
+
+    shops = []
+    for shop in shops_cursor:
+        shops.append({
+            "name": shop.get("shop_name", "Unnamed Shop"),
+            "category": shop.get("shop_type", "Unknown"),
+            "image_url": shop.get("shop_photo", "/static/default-avatar.png"),
+            "address": shop.get("shop_address", ""),
+            "district": shop.get("shop_district", ""),
+            "pincode": shop.get("shop_pincode", ""),
+            "distance": None,
+            "email": shop.get("email", "")
+        })
+    return jsonify({"shops": shops})
+
+@app.route('/api/items')
+def api_items():
+    seller_email = request.args.get('seller_email')
+    query = {}
+    if seller_email:
+        query['seller_email'] = seller_email
+
+    items_cursor = items.find(query)
+    items_list = []
+    for item in items_cursor:
+        items_list.append({
+            "id": str(item['_id']),
+            "name": item.get('name'),
+            "type": item.get('type'),
+            "price": item.get('price', 0),
+            "image_url": item.get('image_url', '/static/default-avatar.png'),
+            "description": item.get('description', '')
+        })
+    return jsonify({"items": items_list})
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -81,8 +214,7 @@ def register():
             "role": request.form['role'],
             "otp": otp
         }
-        msg = Message("Your HaatExpress OTP Verification Code",
-                      recipients=[email])
+        msg = Message("Your HaatExpress OTP Verification Code", recipients=[email])
         msg.body = f"Your OTP is: {otp}"
         try:
             mail.send(msg)
@@ -121,7 +253,6 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['user'] = user['email']
             session['role'] = user['role']
-            # Route based on role
             if user['role'] == 'admin':
                 return redirect('/admin-dashboard')
             elif user['role'] == 'seller':
@@ -135,7 +266,6 @@ def login():
         return render_template("login.html", error="Invalid credentials.")
     return render_template("login.html")
 
-# ---- GOOGLE LOGIN ----
 @app.route('/google-login')
 def google_login():
     google = OAuth2Session(
@@ -189,7 +319,6 @@ def google_callback():
     else:
         return redirect('/')
 
-# ---- PASSWORD RESET ----
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
@@ -314,7 +443,7 @@ def post_notice():
     if 'user' not in session or session.get('role') != 'admin':
         return redirect('/login')
     notice_msg = request.form['message'].strip()
-    target_email = request.form.get('target_email', 'all') # "all" or one seller's email
+    target_email = request.form.get('target_email', 'all')
 
     notice_doc = {
         "notice": notice_msg,
@@ -359,10 +488,10 @@ def admin_remove_seller(email):
     orders.delete_many({"shop_email": email})
     return redirect('/admin-dashboard')
 
-# ---- SELLER and CUSTOMER ROUTES ----
+# Initialize seller, customer, delivery blueprints
 init_seller_routes(app, db, mail=mail, admin_email=ADMIN_EMAIL)
 init_customer_routes(app, db, mail=mail, admin_email=ADMIN_EMAIL)
-init_delivery_routes(app, db)  # DELIVERY ROUTES - THIS ADDS/REGISTERS THE delivery_bp blueprint
+init_delivery_routes(app, db)
 
 @app.route("/debug-uri")
 def debug_uri():
@@ -383,6 +512,36 @@ def inject_user():
         'user_email': user_email,
         'user_name': user_data['full_name'] if user_data else None
     }
+
+# Notify merchant endpoint — send payment notification email and sms
+@app.route('/notify-merchant', methods=['POST'])
+def notify_merchant():
+    data = request.get_json()
+    merchant_upi = data.get('merchant_upi', '')
+    merchant_phone = data.get('merchant_phone', '')
+    payment_method = data.get('payment_method', '')
+    order = data.get('order', {})
+
+    customer_email = order.get('email')
+    customer_phone = order.get('phone')
+
+    email_sent = False
+    sms_sent = False
+
+    if customer_email:
+        email_sent = send_payment_email(customer_email, order)
+
+    if customer_phone:
+        normalized_phone = customer_phone
+        if not customer_phone.startswith('+'):
+            normalized_phone = '+91' + customer_phone  # Adjust country code as needed
+        sms_sent = send_payment_sms(normalized_phone, order)
+
+    return jsonify({
+        "status": "notification attempted",
+        "email_sent": email_sent,
+        "sms_sent": sms_sent,
+    }), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

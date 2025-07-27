@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Cart - JibonCare</title>
+  <link rel="stylesheet" href="../static/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .cart-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fdf8f0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+
+    h2 {
+      color: #5c3b1e;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .cart-section {
+      margin-bottom: 40px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      background-color: #fffaf2;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 10px;
+      border-left: 6px solid #b9925d;
+    }
+
+    .cart-item span {
+      font-weight: 500;
+      color: #2c1f13;
+    }
+
+    .address-box {
+      margin-bottom: 25px;
+    }
+
+    .address-box textarea {
+      width: 100%;
+      height: 100px;
+      padding: 12px;
+      border: 1px solid #d6ba93;
+      border-radius: 10px;
+      font-size: 15px;
+      resize: vertical;
+    }
+
+    .summary {
+      text-align: right;
+      font-size: 1.1em;
+      color: #3d2a1c;
+      margin-bottom: 20px;
+    }
+
+    .checkout-btn {
+      background-color: #a87c4f;
+      color: white;
+      padding: 12px 26px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      float: right;
+      transition: background 0.3s;
+    }
+
+    .checkout-btn:hover {
+      background-color: #926739;
+    }
+
+    .history-section {
+      background: #f7f2eb;
+      border: 1px solid #ebd5b6;
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .history-section h3 {
+      color: #6c4b2f;
+    }
+
+    .order-history {
+      margin-top: 15px;
+    }
+
+    .order-history li {
+      margin-bottom: 10px;
+      color: #4f3b2a;
+    }
+  </style>
+</head>
+<body>
+  <!-- ✅ Correct Header Placement -->
+  <header>
+    <div class="logo">
+      <img src="../static/images/jiboncare_Logo.png" alt="Logo">
+      <div class="location">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>Detecting location...</span>
+      </div>
+    </div>
+    
+    <div class="nav-main">
+      <div class="nav-links">
+        <a href="../templates/index.html">Home</a>
+        <a href="../templates/about.html">About</a>
+        <div class="dropdown">
+          <a href="#">Choose Store</a>
+          <div class="dropdown-content">
+            <a href="grocery.html">Grocery</a>
+            <a href="medicine.html">Medicine</a>
+            <a href="restaurant.html">Restaurant</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" placeholder="Search...">
+        <button><i class="fas fa-search"></i></button>
+      </div>
+    </div>
+
+    <div class="auth-cart">
+      <a href="../login.html">Login</a>
+      <a href="../cart.html" class="cart-btn">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cart-count">0</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="cart-container">
+    <h2>🛒 Your Cart</h2>
+
+    <div class="cart-section">
+      <h3>From Grocery</h3>
+      <div class="cart-item"><span>Apples (2kg)</span><span>₹120</span></div>
+      <div class="cart-item"><span>Rice (1kg)</span><span>₹50</span></div>
+    </div>
+
+    <div class="cart-section">
+      <h3>From Medicine</h3>
+      <div class="cart-item"><span>Paracetamol</span><span>₹30</span></div>
+      <div class="cart-item"><span>Multivitamins</span><span>₹150</span></div>
+    </div>
+
+    <div class="cart-section">
+      <h3>From Restaurant</h3>
+      <div class="cart-item"><span>Paneer Butter Masala</span><span>₹180</span></div>
+      <div class="cart-item"><span>Butter Naan x 2</span><span>₹60</span></div>
+    </div>
+
+    <div class="address-box">
+      <h3>📍 Delivery Address</h3>
+      <textarea placeholder="Enter your complete home address..."></textarea>
+    </div>
+
+    <div class="summary">
+      <strong>Total: ₹590</strong>
+    </div>
+    <button class="checkout-btn">Proceed to Payment</button>
+
+    <br><br><hr style="margin: 50px 0;">
+
+    <div class="history-section">
+      <h3>🕒 Order History</h3>
+      <ul class="order-history">
+        <li>10 July 2025 - ₹450 - Delivered</li>
+        <li>28 June 2025 - ₹620 - Delivered</li>
+        <li>15 June 2025 - ₹340 - Cancelled</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ✅ Footer -->
+  <footer>
+    <p>&copy; 2025 HaatXpress. Made with 🧡 for your neighborhood.</p>
+    <p>Contact: <a href="mailto:support@haatexpress.com">support@haatexpress.com</a></p>
+  </footer>
+
+</body>
+</html>

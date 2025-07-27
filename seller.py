@@ -6,8 +6,10 @@ from datetime import datetime
 from bson import ObjectId
 from flask_mail import Message
 
+
 seller_bp = Blueprint('seller', __name__)
 UPLOAD_FOLDER = 'static/uploads'
+
 
 def send_order_notification(mail, subject, recipients, body):
     """Helper to send an email."""
@@ -17,6 +19,7 @@ def send_order_notification(mail, subject, recipients, body):
             mail.send(msg)
         except Exception as e:
             print("Could not send mail:", e)
+
 
 def format_order_email(order):
     items_list = "\n".join([f"- {item['name']} ×1 @ ₹{item['price']}" for item in order.get('items', [])])
@@ -34,6 +37,7 @@ Payment: {order.get("payment", "--")}
 Order Time: {order.get("timestamp", "-")}
 """
 
+
 def init_seller_routes(app, db, mail=None, admin_email=None):
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -43,7 +47,6 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
     notices_col = db['notices']
     earnings_col = db['earnings']
 
-    # Seller Dashboard
     @seller_bp.route('/seller/dashboard')
     def seller_dashboard():
         if 'user' not in session or session.get('role') != 'seller':
@@ -52,11 +55,9 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
         shop_data = sellers_col.find_one({'email': email})
         seller_items = list(items_col.find({'seller_email': email}))
 
-        # Fetch notices for "all" and for this seller, and format for template
         raw_notices = list(notices_col.find({'$or': [{"to": "all"}, {"to": email}]}).sort("timestamp", -1))
         notice_list = []
         for n in raw_notices:
-            # Get date as string from timestamp (datetime or fallback)
             dt = n.get("timestamp")
             if isinstance(dt, datetime):
                 date_str = dt.strftime('%Y-%m-%d %H:%M')
@@ -65,7 +66,7 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
             else:
                 date_str = n.get("date", "")
             notice_list.append({
-                "message": n.get("message", ""),  # MUST have message field in DB
+                "message": n.get("message", ""),
                 "date": date_str
             })
         earnings_data = earnings_col.find_one({"seller_email": email}) or {}
@@ -97,7 +98,6 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
             orders=seller_orders
         )
 
-    # Register Shop
     @seller_bp.route('/seller/register-shop', methods=['POST'])
     def register_shop():
         if 'user' not in session or session.get('role') != 'seller':
@@ -129,6 +129,7 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
                 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
                 photo.save(photo_path)
                 photo_url = f"/{photo_path.replace(os.sep, '/')}"
+
             sellers_col.update_one(
                 {"email": email},
                 {"$set": {
@@ -146,7 +147,6 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
         except Exception as e:
             return f"Shop registration failed: {str(e)}", 500
 
-    # Edit Shop
     @seller_bp.route('/seller/edit-shop', methods=['GET', 'POST'])
     def edit_shop():
         if 'user' not in session or session.get('role') != 'seller':
@@ -181,7 +181,6 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
                 return f"Shop update failed: {str(e)}", 500
         return render_template('edit_shop.html', shop=shop)
 
-    # Upload Item
     @seller_bp.route('/seller/upload-item', methods=['POST'])
     def upload_item():
         if 'user' not in session or session.get('role') != 'seller':
@@ -212,7 +211,6 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
         except Exception as e:
             return f"Upload failed: {str(e)}", 500
 
-    # Delete Item
     @seller_bp.route('/seller/delete-item/<item_id>', methods=['POST'])
     def delete_item(item_id):
         if 'user' not in session or session.get('role') != 'seller':
@@ -223,7 +221,6 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
         except Exception as e:
             return f"Delete failed: {str(e)}", 500
 
-    # Seller Set Order Status
     @seller_bp.route('/seller/order-status/<order_id>', methods=['POST'])
     def seller_set_order_status(order_id):
         if 'user' not in session or session.get('role') != 'seller':
@@ -238,15 +235,14 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
             if new_status == "paid":
                 total_earnings = float(earnings_doc.get("total_earnings", 0)) + float(order.get("total", 0))
                 earnings_col.update_one({"seller_email": session['user']},
-                                      {"$set": {"total_earnings": total_earnings,
-                                                "last_updated": datetime.now().strftime('%Y-%m-%d %H:%M:%S')}},
-                                      upsert=True)
+                                        {"$set": {"total_earnings": total_earnings,
+                                                  "last_updated": datetime.now().strftime('%Y-%m-%d %H:%M:%S')}},
+                                        upsert=True)
             return redirect('/seller/dashboard')
         except Exception as e:
             return f"Order status update failed: {str(e)}", 500
 
-    # Place Order with Email Notification
-    def place_order(order_data, mail=None, admin_email=None):
+    def place_order(order_data, mail=mail, admin_email=admin_email):
         order_data['paid_status'] = "pending"
         order_data['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         order_id = orders_col.insert_one(order_data).inserted_id
@@ -264,4 +260,4 @@ def init_seller_routes(app, db, mail=None, admin_email=None):
         return str(order_id)
 
     app.register_blueprint(seller_bp)
-    app.place_order = lambda *a, **k: place_order(*a, **k)
+    app.place_order = place_order

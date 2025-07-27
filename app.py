@@ -66,6 +66,20 @@ GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v1/userinfo"
 def home():
     return render_template("index.html")
 
+
+@app.route("/grocery")
+def grocery():
+    return render_template("grocery.html")
+
+@app.route("/medicine")
+def medicine():
+    return render_template("medicine.html")
+
+@app.route("/restaurant")
+def restaurant():
+    return render_template("restaurant.html")
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -386,3 +400,5 @@ def inject_user():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+

@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-<<<<<<< HEAD
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HaatXpress - Local Shops Delivered</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -22,7 +21,6 @@
     }
     header {
       background-color: #5C3A21;
-=======
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HaatXpress</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='/style1.css') }}">
@@ -37,14 +35,12 @@
     }
     header {
       background-color: #400d2e;
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
       color: white;
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 15px 30px;
       flex-wrap: wrap;
-<<<<<<< HEAD
       box-shadow: 0 3px 9px rgba(92, 58, 33, 0.7);
       position: relative;
       z-index: 1000;
@@ -93,13 +89,10 @@
       flex: 1;
       justify-content: center;
       user-select: none;
-=======
       box-shadow: 0 3px 9px #21173344;
       position:relative; z-index:20;
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
     }
     .category-dropdown {
-<<<<<<< HEAD
       border-radius: 10px;
       padding: 7px 16px;
       font-size: 16px;
@@ -206,7 +199,6 @@
       letter-spacing: 0.02ch;
       line-height: 1.5;
     }
-=======
       border-radius:10px; padding:7px 16px; font-size:16px; background:#ede2fc; color:#522c54; border:none;
       margin-right:18px; outline:none;
       box-shadow:0 4px 18px #7b1fa22c, 0 1.5px 0 #fff4;
@@ -264,7 +256,6 @@
 
     .hero h2 { font-size: 2.4rem; letter-spacing:0.2ch; }
     .hero p { font-size: 1.13rem; max-width: 600px; margin: auto; color: #0b0b0b; letter-spacing:0.02ch; }
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
     .store-section {
       display: flex;
       flex-wrap: wrap;
@@ -276,7 +267,6 @@
       user-select: none;
     }
     .store-card {
-<<<<<<< HEAD
       background: #fff0fa;
       color: #5C3A21;
       padding: 22px 14px 20px;
@@ -313,7 +303,6 @@
       font-weight: 700;
       color: #5C3A21;
       user-select: text;
-=======
       background: linear-gradient(145deg, #51416c 82%, #422d4c 100%);
       color: white; padding: 22px 12px 19px 12px; border-radius: 17px; min-width:230px; width: 265px;
       box-shadow: 0 4px 35px #22133060, 0 2px 0 #fff1;
@@ -332,30 +321,10 @@
     .store-card img {
       width:70px; height:70px;
       margin: 8px auto 17px auto; display:block; border-radius:15px; object-fit: cover; box-shadow: 0 3px 16px #0004;
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
     }
     .category-badge {
-<<<<<<< HEAD
-      display: inline-block;
-      border-radius: 9px;
-      font-size: 13px;
-      color: #4a3052;
-      background: #d5c1f7;
-      padding: 3px 13px;
-      margin-bottom: 9px;
-      font-weight: 600;
-      box-shadow: 0 1.5px 0 #bfb5f8;
-      user-select: none;
-    }
-    .store-dist {
-      font-size: 12px;
-      color: #835f9e;
-      margin: 4px;
-      user-select: none;
-=======
       display:inline-block; border-radius:9px; font-size:13px; color:#223146; background:#fafafa;
       padding:2.5px 12px; margin-bottom:7px; font-weight:500; box-shadow:0 1.5px 0 #c6fff9;
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
     }
     .modal {
       display: none;
@@ -374,7 +343,6 @@
       box-shadow: 0 5px 43px #765097cc;
       user-select: none;
     }
-<<<<<<< HEAD
     .modal.active {
       display: block;
     }
@@ -593,7 +561,6 @@
         left: 2vw;
         width: 96vw;
       }
-=======
     .modal.active { display: block; }
     .modal-close { float: right; background: #ae3e63; border: none; padding:10px 19px; border-radius: 5px; color: white; cursor: pointer;}
     .modal ul { margin:35px 0 0 0; padding:0; list-style:none;}
@@ -616,12 +583,10 @@
       .store-section { flex-direction:column; }
       .store-card { width:98vw; min-width:97vw;}
       .modal { left:2vw; width:96vw; }
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
     }
   </style>
 </head>
 <body>
-<<<<<<< HEAD
 
 <header>
   <div class="logo">
@@ -629,7 +594,6 @@
     <div class="location" aria-live="polite" aria-atomic="true">
       <i class="fas fa-map-marker-alt"></i>
       <span id="location-text">Please set your location</span>
-=======
   <!-- HEADER 
   <header>
     <div class="logo">
@@ -641,7 +605,6 @@
           <i class="fa fa-crosshairs"></i> Update
         </button>
       </div>
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
     </div>
   </div>
   <div class="nav-main">
@@ -656,7 +619,6 @@
       <input id="searchInput" type="text" placeholder="Search store, product or location..." onkeyup="triggerSmartSearch()" aria-label="Search stores, products or location" />
       <button aria-label="Search"><i class="fas fa-search"></i></button>
     </div>
-<<<<<<< HEAD
   </div>
   <div class="auth-cart">
     {% if user_email %}
@@ -905,7 +867,6 @@
         itemDesc.className = 'item-desc';
         itemDesc.textContent = item.description;
         itemInfo.appendChild(itemDesc);
-=======
     <div class="auth-cart">
       {% if user_email %}
         <span style="color:#6a8973;">{{ user_email }}</span>
@@ -1210,7 +1171,6 @@ function showShopProducts(shop_email, shop_name) {
         li.innerHTML = <span>${p.name} <b>- ₹${p.price}</b> <span style="color:#eee;font-size:12px;">(${p.type})</span></span>
           <button onclick="event.stopPropagation();addToCart('${p.name.replace(/'/g,"&#39;")}', ${+p.price});">Add to Cart</button>;
         ul.appendChild(li);
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
       }
 
       itemInfo.prepend(itemName);
@@ -1230,8 +1190,6 @@ function showShopProducts(shop_email, shop_name) {
 
       ul.appendChild(li);
     });
-<<<<<<< HEAD
-=======
 }
 
 function closeModal() {
@@ -1273,7 +1231,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!navigator.geolocation) {
     locationSpan.innerText = "Geolocation not supported";
     return;
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
   }
 
   function closeMenuModal() {
@@ -1282,7 +1239,6 @@ document.addEventListener("DOMContentLoaded", () => {
     menuModal.setAttribute('aria-hidden', 'true');
   }
 
-<<<<<<< HEAD
   function handleAddToCart(item) {
     if (!isUserLoggedIn) {
       openLoginPrompt();
@@ -1292,11 +1248,9 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCartCount();
     alert(`Added "${item.name}" to cart.`);
   }
-=======
       try {
         const response = await fetch(https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json);
         if (!response.ok) throw new Error("Failed to fetch location");
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
 
   function updateCartCount() {
     const cartCountElem = document.getElementById('cart-count');
@@ -1310,7 +1264,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loginPrompt.focus();
   }
 
-<<<<<<< HEAD
   function closeLoginPrompt() {
     const loginPrompt = document.getElementById('loginPromptModal');
     loginPrompt.classList.remove('active');
@@ -1322,13 +1275,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const menuModal = document.getElementById('menuModal');
       if (menuModal.classList.contains('active')) {
         closeMenuModal();
-=======
         const country = data.address.country || "";
         locationSpan.innerText = ${place ? place + ", " : ""}${country};
       } catch (error) {
         console.error("Reverse geocoding failed:", error);
         locationSpan.innerText = "Location unavailable";
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
       }
       const loginPrompt = document.getElementById('loginPromptModal');
       if (loginPrompt.classList.contains('active')) {
@@ -1339,7 +1290,6 @@ document.addEventListener("DOMContentLoaded", () => {
         locationModal.classList.remove('active');
       }
     }
-<<<<<<< HEAD
   });
 
   function categoryChanged() {
@@ -1354,10 +1304,8 @@ document.addEventListener("DOMContentLoaded", () => {
   window.onload = () => {
     document.getElementById('locationModal').classList.add('active');
   };
-=======
   );
 });
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
 </script>
 
 </body>

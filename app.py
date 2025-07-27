@@ -149,7 +149,6 @@ def send_payment_sms(to_phone, order):
 def home():
     return render_template("index.html")
 
-<<<<<<< HEAD
 @app.route('/api/shops')
 def api_shops():
     area = request.args.get('area', '').strip().lower()
@@ -199,7 +198,6 @@ def api_items():
             "description": item.get('description', '')
         })
     return jsonify({"items": items_list})
-=======
 
 @app.route("/grocery")
 def grocery():
@@ -213,7 +211,6 @@ def medicine():
 def restaurant():
     return render_template("restaurant.html")
 
->>>>>>> 95e68d88c662f253a2931dce2b7e3f8b26b11eb8
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

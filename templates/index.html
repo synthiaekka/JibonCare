@@ -423,8 +423,11 @@
   </header>
 
   <section class="hero" role="banner">
-    <h1>Welcome to JibonCare</h1>
-    <p>Connecting you directly to local shops groceries, medicines, food, all from your trusted neighborhood within your zone. </p><br><p>Stay happy 😀❤️</p>
+    <h2>Welcome to HaatXpress</h2>
+    <p>
+      Connecting you directly to local shops - groceries, medicines, food, all
+      from your trusted neighborhood within your zone. Stay happy😀❤️
+    </p>
   </section>
   <section class="store-section" id="store-list" aria-label="List of shops">
     <div style="color:#5C3A21;text-align:center;width:100%;">Please select your location in the dropdown to see shops.</div>
@@ -445,182 +448,261 @@
       <a href="/register" class="login-unique-btn" aria-label="Register">Register</a>
     </div>
   </div>
+<center>
+  <footer role="contentinfo">
+    <p>&copy; 2025 HaatXpress. Made with 🧡 for your neighborhood.</p>
+    <p>
+      Contact: <a href="mailto:support@haatexpress.com">support@haatexpress.com</a>
+    </p>
+  </footer>
+</center>
+  <script>
+    // Variables
+    let userLocation = null;
+    const isUserLoggedIn = !!document.getElementById("user-email");
+    let cartCount = 0;
+    let CURRENT_SHOPS = [];
+    let CURRENT_CATEGORY = "";
+    let SEARCH_TEXT = "";
 
-  <center>
-    <footer role="contentinfo">
-      <p>&copy; 2025 JibonCare. Made with 🧡 for your neighborhood.</p>
-      <p>Contact: <a href="mailto:support@haatexpress.com">support@haatexpress.com</a></p>
-    </footer>
-  </center>
-
-<script>
-let userLocation = "";
-let isUserLoggedIn = !!document.getElementById("user-email");
-let cartCount = 0;
-let CURRENT_SHOPS = [];
-let CURRENT_CATEGORY = "";
-let SEARCH_TEXT = "";
-let ALL_ITEMS_BY_SHOP = {}; // {shopId: [items]}
-
-// Restore location for returning/just-logged-in users
-function restoreLocationFromLocalStorage() {
-  const saved = window.localStorage.getItem('haatxpress_user_location');
-  if (saved && document.getElementById('location-select')) {
-    document.getElementById('location-select').value = saved;
-    userLocation = saved;
-    fetchShopsByArea(userLocation);
-  }
-}
-function saveLocationToLocalStorage(loc) {
-  try { window.localStorage.setItem('haatxpress_user_location', loc); } catch(e){}
-}
-
-// LOCATION
-function handleLocationChange() {
-  const select = document.getElementById('location-select');
-  const value = select.value;
-  userLocation = value;
-  if (!value) {
-    document.getElementById('store-list').innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Please select your location in the dropdown to see shops.</div>`;
-    document.getElementById('items-list').innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>`;
-    saveLocationToLocalStorage('');
-    return;
-  }
-  select.style.background = '#edf4fd';
-  saveLocationToLocalStorage(userLocation);
-  fetchShopsByArea(userLocation);
-}
-
-// Fetch shops with items pre-fetched for fast product search
-function fetchShopsByArea(area) {
-  const storeList = document.getElementById("store-list");
-  storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Loading shops...</div>`;
-  document.getElementById('items-list').innerHTML = '<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>';
-  fetch(`/api/shops?area=${encodeURIComponent(area)}`)
-    .then((response) => {
-      if (!response.ok) throw new Error("API error");
-      return response.json();
-    })
-    .then((data) => {
-      CURRENT_SHOPS = data.shops || data || [];
-      // Preload items for each shop for fast smart search
-      let shopFetches = [];
-      ALL_ITEMS_BY_SHOP = {};
-      CURRENT_SHOPS.forEach(shop => {
-        if (!shop || !shop.email) return;
-        let fetchTask = fetch(`/api/items?seller_email=${encodeURIComponent(shop.email)}`)
-          .then(res => res.ok ? res.json() : {items:[]})
-          .then(r => { ALL_ITEMS_BY_SHOP[shop.id] = r.items || []; });
-        shopFetches.push(fetchTask);
-      });
-      Promise.all(shopFetches).then(() => {
-        showShops(CURRENT_SHOPS);
-        resetFilters();
-      });
-    })
-    .catch(() => {
-      storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Error loading shops.</div>`;
-    });
-}
-
-// Show shops in UI (filtered)
-function showShops(shops) {
-  const storeList = document.getElementById("store-list");
-  if (!shops || shops.length === 0) {
-    storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No shops found in this area.</div>`;
-    return;
-  }
-  storeList.innerHTML = "";
-  shops.forEach((shop) => {
-    const shopElem = document.createElement("div");
-    shopElem.className = "store-card";
-    shopElem.tabIndex = 0;
-    shopElem.setAttribute("role", "button");
-    shopElem.setAttribute("aria-label", `${shop.name} shop`);
-    shopElem.innerHTML = `
-      <img src="${shop.image_url || "/static/default-avatar.png"}" alt="${shop.name} shop image" />
-      <div class="category-badge">${capitalize(shop.category)}</div>
-      <h3>${shop.name}</h3>
-      <div class="store-dist">${shop.distance ? `${shop.distance} km away` : ""}</div>
-    `;
-    shopElem.addEventListener("click", () => {
-      displayItemsDirect(shop);
-    });
-    shopElem.addEventListener("keypress", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault(); displayItemsDirect(shop);
+    // Submit user location
+    function submitUserLocation() {
+      const input = document.getElementById("user-location-input");
+      const location = input.value.trim();
+      if (!location) {
+        alert("Please enter a valid location.");
+        return;
       }
-    });
-    storeList.appendChild(shopElem);
-  });
-  document.getElementById("items-list").innerHTML =
-    `<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>`;
-}
-function resetFilters() {
-  document.getElementById("categorySelect").selectedIndex = 0;
-  document.getElementById("searchInput").value = "";
-  CURRENT_CATEGORY = "";
-  SEARCH_TEXT = "";
-}
+      userLocation = location;
+      document.getElementById("locationModal").classList.remove("active");
+      updateHeaderLocation();
+      fetchShopsByArea(userLocation);
+    }
 
-// Fetch and display items for shop immediately (no modal)
-function displayItemsDirect(shop) {
-  const itemsList = document.getElementById("items-list");
-  itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Loading items...</div>`;
-  if (ALL_ITEMS_BY_SHOP && ALL_ITEMS_BY_SHOP[shop.id] && ALL_ITEMS_BY_SHOP[shop.id].length) {
-    setTimeout(()=>renderItemCards(ALL_ITEMS_BY_SHOP[shop.id]),120); // for "Loading" message fade
-  } else if (shop.email) {
-    fetch(`/api/items?seller_email=${encodeURIComponent(shop.email)}`)
-      .then((res) => res.ok ? res.json() : {items:[]})
-      .then((data) => {
-        let items = data.items || [];
-        ALL_ITEMS_BY_SHOP[shop.id] = items.slice();
-        renderItemCards(items);
-      })
-      .catch(() => {
-        itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Error loading items.</div>`;
+    // Update header location display and button
+    function updateHeaderLocation() {
+      const locationText = document.getElementById("location-text");
+      locationText.textContent = userLocation + " ";
+      if (!document.getElementById("change-location-btn")) {
+        const locationDiv = locationText.parentElement;
+        const btn = document.createElement("button");
+        btn.id = "change-location-btn";
+        btn.textContent = "Change";
+        btn.style.cssText =
+          "margin-left:8px; background:#D81BA0; color:#fff; border:none; border-radius:5px; padding:3px 10px; cursor:pointer; font-weight:600;";
+        btn.setAttribute("aria-label", "Change your location");
+        btn.onmouseenter = () => (btn.style.backgroundColor = "#7f58e7");
+        btn.onmouseleave = () => (btn.style.backgroundColor = "#D81BA0");
+        btn.onclick = openLocationModal;
+        locationDiv.appendChild(btn);
+      }
+    }
+    function openLocationModal() {
+      document.getElementById("locationModal").classList.add("active");
+      document.getElementById("user-location-input").value = "";
+    }
+
+    // Fetch shops by area from API
+    function fetchShopsByArea(area) {
+      const storeList = document.getElementById("store-list");
+      storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Loading shops...</div>`;
+      fetch(`/api/shops?area=${encodeURIComponent(area)}`)
+        .then((response) => {
+          if (!response.ok) throw new Error("API error");
+          return response.json();
+        })
+        .then((data) => {
+          CURRENT_SHOPS = data.shops || data;
+          CURRENT_CATEGORY = "";
+          SEARCH_TEXT = "";
+          showShops(CURRENT_SHOPS);
+          resetFilters();
+        })
+        .catch(() => {
+          storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Error loading shops.</div>`;
+        });
+    }
+
+    // Show shops in UI
+    function showShops(shops) {
+      const storeList = document.getElementById("store-list");
+      if (!shops || shops.length === 0) {
+        storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No shops found in your area.</div>`;
+        return;
+      }
+      storeList.innerHTML = "";
+      shops.forEach((shop) => {
+        const shopElem = document.createElement("div");
+        shopElem.className = "store-card";
+        shopElem.tabIndex = 0;
+        shopElem.setAttribute("role", "region");
+        shopElem.setAttribute("aria-label", `${shop.name} shop`);
+        shopElem.innerHTML = `
+          <img src="${shop.image_url || "/static/default-avatar.png"}" alt="${shop.name} shop image" />
+          <div class="category-badge">${capitalize(shop.category)}</div>
+          <h3>${shop.name}</h3>
+          <div class="store-dist">${shop.distance ? `${shop.distance} km away` : ""}</div>
+          `;
+        shopElem.addEventListener("click", () => {
+          openMenuModal(shop.id, shop.name);
+          if (shop.email) fetchItemsBySeller(shop.email);
+          else
+            document.getElementById("items-list").innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No items info available for this shop.</div>`;
+        });
+        shopElem.addEventListener("keypress", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openMenuModal(shop.id, shop.name);
+            if (shop.email) fetchItemsBySeller(shop.email);
+          }
+        });
+        storeList.appendChild(shopElem);
       });
-  } else {
-    itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No items info available for this shop.</div>`;
-  }
-}
-function renderItemCards(items) {
-  const itemsList = document.getElementById("items-list");
-  if (!items || items.length===0) {
-    itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No items found for this shop.</div>`;
-    return;
-  }
-  itemsList.innerHTML = "";
-  items.forEach((item) => {
-    const card = document.createElement("div");
-    card.className = "item-card";
-    card.tabIndex = 0;
-    card.innerHTML = `
-      <div class="item-type-badge">${capitalize(item.type)}</div>
-      <img src="${item.image_url || "/static/default-avatar.png"}" alt="${item.name}" />
-      <h4>${item.name}</h4>
-      <div class="item-card-desc">${item.description?item.description:''}</div>
-      <div class="item-card-price">₹${item.price && item.price>=0 ? item.price.toFixed(2):'--'}</div>
-      <button aria-label="Add ${item.name} to cart">Add to Cart</button>
-    `;
-    card.querySelector('button').onclick = ()=>handleAddToCart(item);
-    itemsList.appendChild(card);
-  });
-}
+      // Clear items-list if shops refreshed
+      document.getElementById("items-list").innerHTML =
+        '<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>';
+    }
 
-// "Add to Cart" button handler
-function handleAddToCart(item) {
-  if (!isUserLoggedIn) {
-    openLoginPrompt();
-    return;
-  }
-  cartCount++;
-  updateCartCount();
-  alert(`Added "${item.name}" to cart.`); // Replace with your real cart logic/UI
-}
-function updateCartCount() {
-  document.getElementById("cart-count").textContent = cartCount;
-}
+    // Fetch items for selected seller
+    function fetchItemsBySeller(sellerEmail) {
+      const itemsList = document.getElementById("items-list");
+      itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Loading items...</div>`;
+      fetch(`/api/items?seller_email=${encodeURIComponent(sellerEmail)}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch items");
+          return res.json();
+        })
+        .then((data) => {
+          const items = data.items || [];
+          if (items.length === 0) {
+            itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No items found for this shop.</div>`;
+            return;
+          }
+          displayItems(items);
+        })
+        .catch(() => {
+          itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Error loading items.</div>`;
+        });
+    }
+
+    // Show items in UI
+    function displayItems(items) {
+      const itemsList = document.getElementById("items-list");
+      itemsList.innerHTML = "";
+      items.forEach((item) => {
+        const card = document.createElement("div");
+        card.className = "store-card";
+        card.innerHTML = `
+          <img src="${item.image_url || "/static/default-avatar.png"}" alt="${item.name}" />
+          <div class="category-badge">${capitalize(item.type)}</div>
+          <h3>${item.name}</h3>
+          <div class="store-dist">₹${item.price.toFixed(2)}</div>
+          <button aria-label="Add ${item.name} to cart" style="background:#D81BA0; color:#fff; border:none; border-radius:8px; padding:6px 12px; cursor:pointer; font-weight:bold;">
+          Add to Cart
+          </button>
+          `;
+        const btn = card.querySelector("button");
+        btn.addEventListener("click", () => handleAddToCart(item));
+        itemsList.appendChild(card);
+      });
+    }
+
+    function capitalize(str) {
+      if (!str) return "";
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // Menu modal controls
+    function openMenuModal(shopId, shopName) {
+      const menuModal = document.getElementById("menuModal");
+      const menuTitle = document.getElementById("menuModalTitle");
+      const menuContent = document.getElementById("menuContent");
+
+      menuTitle.textContent = `Menu - ${shopName}`;
+      menuContent.innerHTML = `<p>Loading menu...</p>`;
+      menuModal.setAttribute("aria-hidden", "false");
+      menuModal.classList.add("active");
+      menuModal.focus();
+
+      fetch(`/api/shop/${shopId}/menu`)
+        .then((resp) => {
+          if (!resp.ok) throw new Error("Failed to fetch menu");
+          return resp.json();
+        })
+        .then((data) => {
+          if (!data || !Array.isArray(data.menu) || data.menu.length === 0) {
+            menuContent.innerHTML = `<p>No menu items found.</p>`;
+            return;
+          }
+          renderMenuItems(data.menu);
+        })
+        .catch(() => {
+          menuContent.innerHTML = `<p>Failed to load menu. Please try again later.</p>`;
+        });
+    }
+
+    function renderMenuItems(items) {
+      const menuContent = document.getElementById("menuContent");
+      menuContent.innerHTML = "<ul></ul>";
+      const ul = menuContent.querySelector("ul");
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        const itemInfo = document.createElement("div");
+        itemInfo.className = "item-info";
+
+        const itemName = document.createElement("div");
+        itemName.className = "item-name";
+        itemName.textContent = item.name;
+
+        const itemDesc = document.createElement("div");
+        itemDesc.className = "item-desc";
+        if (item.description) {
+          itemDesc.textContent = item.description;
+        } else {
+          itemDesc.textContent = "";
+        }
+
+        itemInfo.appendChild(itemName);
+        if (item.description) itemInfo.appendChild(itemDesc);
+
+        const itemPrice = document.createElement("div");
+        itemPrice.className = "item-price";
+        itemPrice.textContent = `₹${item.price.toFixed(2)}`;
+
+        const addButton = document.createElement("button");
+        addButton.textContent = "Add to Cart";
+        addButton.setAttribute("aria-label", `Add ${item.name} to cart`);
+        addButton.onclick = () => handleAddToCart(item);
+
+        li.appendChild(itemInfo);
+        li.appendChild(itemPrice);
+        li.appendChild(addButton);
+
+        ul.appendChild(li);
+      });
+    }
+
+    function closeMenuModal() {
+      const menuModal = document.getElementById("menuModal");
+      menuModal.classList.remove("active");
+      menuModal.setAttribute("aria-hidden", "true");
+    }
+
+    // Add to cart handler
+    function handleAddToCart(item) {
+      if (!isUserLoggedIn) {
+        openLoginPrompt();
+        return;
+      }
+      cartCount++;
+      updateCartCount();
+      alert(`Added "${item.name}" to cart.`);
+    }
+
+    function updateCartCount() {
+      const cartCountElem = document.getElementById("cart-count");
+      cartCountElem.textContent = cartCount;
+    }
 
 // Stylish Login Modal controls
 function openLoginPrompt() {

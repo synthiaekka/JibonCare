@@ -202,6 +202,19 @@ def api_items():
         })
     return jsonify({"items": items_list})
 
+@app.route("/grocery")
+def grocery():
+    return render_template("grocery.html")
+
+@app.route("/medicine")
+def medicine():
+    return render_template("medicine.html")
+
+@app.route("/restaurant")
+def restaurant():
+    return render_template("restaurant.html")
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -490,6 +503,12 @@ def admin_remove_seller(email):
     earnings.delete_one({"seller_email": email})
     orders.delete_many({"shop_email": email})
     return redirect('/admin-dashboard')
+@app.route('/api/set_delivery_districts', methods=['POST'])
+def set_delivery_districts():
+    print("SESSION CONTENT:", session)  # Add this
+
+    if 'email' not in session:
+        return jsonify({"error": "Not logged in"}), 401
 
 # Initialize seller, customer, delivery blueprints
 init_seller_routes(app, db, mail=mail, admin_email=ADMIN_EMAIL)
@@ -549,3 +568,9 @@ def notify_merchant():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+
+

@@ -2,466 +2,599 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Delivery Dashboard | HaatExpress</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
   <style>
-    /* Reset and base */
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
     }
     body {
-      font-family: 'Poppins', sans-serif;
-      background: #ffffff;
-      color: #4B3621;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      color: #333;
+      line-height: 1.5;
       min-height: 100vh;
-    }
-
-    /* Container full height, centered, max width */
-    .dashboard-container {
-      background: #fff;
-      max-width: 800px;
-      width: 100%;
-      border-radius: 22px;
-      box-shadow: 0 12px 30px rgb(171 116 43 / 0.3);
-      padding: 50px 40px 40px 40px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      box-sizing: border-box;
-      height: 90vh;
+      padding: 1rem 0 3rem;
     }
 
-    /* Larger header, brown */
-    .dashboard-container h1 {
-      font-size: 3em;
-      font-weight: 900;
-      color: #8B4513;
-      margin: 0 0 40px 0;
+    h1 {
+      color: #8b4513;
+      font-weight: 700;
+      margin-bottom: 1rem;
       text-align: center;
-      letter-spacing: 0.1ch;
-      text-shadow: 0 2px 6px rgba(139,69,19,0.4);
-      user-select: none;
     }
 
-    /* Tab bar across full container width */
-    .tab-bar {
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 40px;
-      gap: 12px;
-      background: #8B4513; /* brown header background */
+    .dashboard-container {
+      background: #fff8f0;
+      max-width: 900px;
+      width: 95%;
       border-radius: 14px;
-      padding: 10px 0;
-      box-shadow: 0 2px 8px rgba(199,21,133,0.3);
+      padding: 20px 25px 40px;
+      box-shadow: 0 4px 12px rgba(107, 64, 26, 0.15);
       user-select: none;
     }
 
-    /* Tab buttons large, solid magenta with white text */
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
     .tab-btn {
-      flex: 1;
-      border-radius: 12px;
-      border: none;
-      font-weight: 700;
-      font-size: 1.4em;
-      padding: 14px 0;
-      margin: 0 6px;
-      background: #C71585 !important; /* Solid magenta */
-      color: #fff !important;
+      background: #fff;
+      border: 2.5px solid #8b4513;
+      color: #8b4513;
+      font-size: 1rem;
+      padding: 10px 22px;
+      border-radius: 25px;
       cursor: pointer;
-      box-shadow: 0 5px 15px rgba(199,21,133,0.6);
-      transition: none !important;
-      outline: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      flex: 1 1 auto;
+      min-width: 140px;
+      text-align: center;
       user-select: none;
-      text-transform: uppercase;
     }
-   
-    /* No hover or focus color changes */
     .tab-btn:hover,
-    .tab-btn:focus,
+    .tab-btn:focus {
+      background-color: #8b4513;
+      color: #fff;
+      outline: none;
+    }
     .tab-btn.active {
-      background: #C71585 !important;
-      color: #fff !important;
-      transform: none !important;
-      box-shadow: 0 5px 15px rgba(199,21,133,0.7);
+      background-color: #8b4513;
+      color: #fff;
+      cursor: default;
     }
 
-    /* Logout button slightly wider */
     .logout-btn {
-      max-width: 100px;
-      font-weight: 900;
-      font-size: 1.4em;
-      text-transform: uppercase;
-    }
-
-    /* Tab content fills container width & grows */
-    .tab-content {
-      width: 100%;
-      flex-grow: 1;
-      overflow-y: auto;
-      display: none;
-      box-sizing: border-box;
-    }
-
-    .tab-content.active {
-      display: block;
-      animation: fadein 0.14s;
-    }
-
-    @keyframes fadein {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
-    /* Orders and Current Delivery Cards bigger font, spaced */
-    .order-card {
-      background: #FFF5E1;
-      border-radius: 16px;
-      padding: 24px 30px 23px 30px;
-      box-shadow: 0 5px 12px rgba(171, 116, 43, 0.25);
-      margin-bottom: 26px;
-      border: 2px solid #A0522D;
-      color: #4B3621;
-      font-size: 1.2em;
-      transition: box-shadow 0.25s ease, border-color 0.25s ease;
-    }
-    .order-card:hover {
-      border-color: #8B4513;
-      box-shadow: 0 12px 40px rgba(171, 116, 43, 0.6);
-    }
-
-    .order-info > div {
-      margin-top: 6px;
-    }
-
-    .order-info > span {
+      background-color: #bb2d3b;
+      border-color: #bb2d3b;
+      color: #fff;
+      max-width: 130px;
+      align-self: center;
       font-weight: 700;
-      color: #A0522D;
-      user-select: none;
+      transition: background-color 0.25s ease;
+    }
+    .logout-btn:hover,
+    .logout-btn:focus {
+      background-color: #d94049;
+      outline: none;
+    }
+
+    /* Tab content */
+    .tab-content {
+      display: none;
+    }
+    .tab-content[aria-hidden="false"] {
+      display: block;
+    }
+
+    /* Orders list */
+    #orders-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .order-card {
+      background: #fff;
+      border: 2px solid #d08044;
+      border-radius: 14px;
+      padding: 15px 20px;
+      box-shadow: 0 3px 8px rgba(198, 122, 44, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      user-select: text;
+    }
+
+    .order-info {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 4px 12px;
+      color: #5a381e;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .order-info > div > span {
+      color: #a0522d;
+      font-weight: 600;
     }
 
     .accept-btn,
-    .reject-btn,
-    .deliver-btn {
-      background: #C71585;
-      color: #FFF5E1;
+    .reject-btn {
+      padding: 8px 14px;
+      font-size: 1rem;
       font-weight: 700;
-      padding: 14px 30px;
-      border-radius: 16px;
-      font-size: 1.3em;
+      border-radius: 12px;
       border: none;
       cursor: pointer;
-      margin-top: 18px;
-      box-shadow: 0 6px 18px rgba(199,21,133,0.6);
+      width: 100%;
+      max-width: 200px;
+      align-self: flex-start;
       user-select: none;
-      margin-right: 10px;
       transition: background-color 0.3s ease;
     }
 
-    .reject-btn {
-      background: #8B4513; /* dark brown reject button */
-      box-shadow: 0 6px 18px rgba(139,69,19,0.7);
+    .accept-btn {
+      background-color: #3a8a33;
+      color: white;
+      margin-top: 5px;
     }
-
     .accept-btn:hover,
-    .deliver-btn:hover {
-      background: #DA3193;
-      color: #fff;
+    .accept-btn:focus {
+      background-color: #4caf50;
+      outline: none;
     }
 
-    .reject-btn:hover {
-      background: #5C3213;
-      color: #fff;
+    .reject-btn {
+      background-color: #bb2d3b;
+      color: white;
+    }
+    .reject-btn:hover,
+    .reject-btn:focus {
+      background-color: #d94049;
+      outline: none;
     }
 
-
-    .no-orders, .no-delivery {
+    .no-orders {
       text-align: center;
-      margin: 50px 0 20px 0;
-      color: #8B4513;
-      background: #FFF5E1;
-      border-radius: 20px;
-      padding: 22px 15px;
+      padding: 2.3em 0;
+      font-size: 1.2rem;
+      color: #8b4513;
+      user-select: none;
+    }
+
+    /* Current order */
+    #current-order {
+      background: #fff8f0;
+      border: 2px solid #c87543;
+      border-radius: 18px;
+      padding: 25px 30px;
+      box-shadow: 0 6px 12px rgba(198, 122, 44, 0.23);
+      user-select: text;
+      font-size: 1.1rem;
+      color: #5a381e;
+      max-width: 600px;
+    }
+
+    .no-delivery {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #a94442;
+      user-select: none;
+      margin: 3em 0;
+    }
+
+    .deliver-btn {
+      margin-top: 1.8em;
+      padding: 12px 24px;
+      font-size: 1.2rem;
       font-weight: 700;
-      font-size: 1.4em;
-      box-shadow: 0 5px 18px rgba(160, 82, 45, 0.15);
+      color: #fff;
+      background-color: #8b4513;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
       user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    .deliver-btn:hover,
+    .deliver-btn:focus {
+      background-color: #a0522d;
+      outline: none;
     }
 
+    /* Earnings */
     .earnings-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin-top: 40px;
+      text-align: center;
+      color: #8b4513;
+    }
+    .earnings-badge {
+      background: #f9debd;
+      border: 2.5px solid #8b4513;
+      display: inline-block;
+      padding: 28px 40px;
+      font-size: 3.5rem;
+      font-weight: 900;
+      border-radius: 20px;
+      font-family: 'Segoe UI Black', Arial, sans-serif;
+      user-select: none;
+      box-shadow: 0 6px 12px rgba(198, 122, 44, 0.4);
+      margin-bottom: 10px;
+    }
+
+    /* Modal for districts */
+    #districtModal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      overflow-y: auto;
+      padding: 40px 15px;
+    }
+    #districtModal .modal-content {
+      background: #fff;
+      padding: 28px 30px 36px;
+      border-radius: 16px;
+      max-width: 480px;
+      margin: auto;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
       user-select: none;
     }
-
-    .earnings-badge {
-      min-width: 140px;
-      min-height: 140px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #A0522D, #8B4513 88%);
-      box-shadow: 0 16px 44px rgba(171, 116, 43, 0.8), 0 5px 0 #fff4;
-      color: #FFF5E1;
-      font-size: 3em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      margin-bottom: 20px;
-      letter-spacing: 0.01ch;
+    #districtModal h2 {
+      color: #8b4513;
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+    #districtModal p {
+      font-size: 1.15rem;
+      margin-bottom: 25px;
+      color: #5a381e;
+    }
+    #districtModal select {
+      width: 100%;
+      height: 200px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 2px solid #c87543;
+      border-radius: 12px;
+      color: #5a381e;
+      font-weight: 600;
+      user-select: none;
+      transition: border-color 0.25s ease;
+      outline-offset: 0;
+    }
+    #districtModal select:focus {
+      border-color: #8b4513;
+      outline: none;
+    }
+    #districtModal button {
+      margin-top: 24px;
+      background: #c71585;
+      color: white;
+      border: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 14px 32px;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    #districtModal button:hover,
+    #districtModal button:focus {
+      background: #d63fa6;
+      outline: none;
     }
 
-    @media (max-width: 900px) {
-      .dashboard-container {
-        margin: 20px auto;
-        padding: 40px 25px 25px 25px;
-        height: auto;
-      }
-      .order-card {
-        font-size: 1.1em;
-        padding: 20px;
-      }
-      .tab-btn {
-        font-size: 1.2em;
-        margin: 0 4px;
-        padding: 12px 0;
-      }
-    }
+    /* Responsive */
     @media (max-width: 480px) {
       .dashboard-container {
-        max-width: 100%;
-        height: auto;
-        padding: 30px 15px 15px 15px;
+        padding: 15px 18px 35px;
+      }
+      .tab-bar {
+        flex-direction: column;
       }
       .tab-btn {
-        font-size: 1em;
-        margin: 0 3px;
+        max-width: none;
+        width: 100%;
+      }
+      .order-card {
+        font-size: 0.95rem;
+      }
+      #current-order {
+        font-size: 1rem;
       }
       .earnings-badge {
-        min-width: 110px;
-        min-height: 110px;
-        font-size: 2em;
+        font-size: 2.8rem;
+        padding: 22px 28px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="dashboard-container" role="main">
+  <main class="dashboard-container" role="main" tabindex="-1">
     <h1>Delivery Partner Dashboard</h1>
     <nav class="tab-bar" role="tablist" aria-label="Delivery dashboard sections">
-      <button id="tab-btn-orders" class="tab-btn" role="tab" aria-selected="true" aria-controls="tab-orders" tabindex="0" onclick="showTab('orders')">Orders Near Me</button>
-      <button id="tab-btn-current" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-current" tabindex="-1" onclick="showTab('current')">My Delivery</button>
-      <button id="tab-btn-earnings" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-earnings" tabindex="-1" onclick="showTab('earnings')">Earnings</button>
+      <button id="tab-btn-orders" class="tab-btn active" role="tab" aria-selected="true"
+        aria-controls="tab-orders" tabindex="0" onclick="showTab('orders')">Orders Near Me</button>
+      <button id="tab-btn-current" class="tab-btn" role="tab" aria-selected="false"
+        aria-controls="tab-current" tabindex="-1" onclick="showTab('current')">My Delivery</button>
+      <button id="tab-btn-earnings" class="tab-btn" role="tab" aria-selected="false"
+        aria-controls="tab-earnings" tabindex="-1" onclick="showTab('earnings')">Earnings</button>
       <button class="tab-btn logout-btn" role="button" aria-label="Logout" onclick="logout()">Logout</button>
     </nav>
-    <!-- Orders near me -->
-    <section id="tab-orders" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-orders">
-      <p style="font-weight:600;color:#8B4513;">
-        <i class="fa-solid fa-location-arrow fa-bounce" aria-hidden="true"></i>
-        <span>Detecting your location...</span>
-      </p>
-      <div id="orders-list" aria-live="polite"></div>
-    </section>
-    <!-- Current delivery -->
-    <section id="tab-current" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-current">
-      <h2 style="font-weight:700;font-size:1.8em;color:#8B4513;">
-        <i class="fa-solid fa-truck-fast" aria-hidden="true"></i> My Current Delivery
-      </h2>
-      <div id="current-order" aria-live="polite"></div>
-    </section>
-    <!-- Earnings -->
-    <section id="tab-earnings" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-earnings">
-      <h2 style="font-weight:700;font-size:1.8em;color:#8B4513;">
-        <i class="fa-solid fa-sack-dollar" aria-hidden="true"></i> My Earnings
-      </h2>
-      <div class="earnings-container">
-        <div class="earnings-badge" id="earnings-text" aria-live="polite" aria-atomic="true">₹0</div>
-        <div style="font-size:18px; color:#8B4513; margin-top:1.5em;" aria-live="polite">
-          Keep delivering for more rewards!
-        </div>
+
+    <!-- Tab Panels -->
+    <section id="tab-orders" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-orders" aria-hidden="false">
+      <div id="orders-list" aria-live="polite" aria-atomic="true">
+        <!-- Orders will be loaded here by script -->
       </div>
     </section>
+
+    <section id="tab-current" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-current" aria-hidden="true" tabindex="-1">
+      <h2><i class="fa-solid fa-truck-fast"></i> My Current Delivery</h2>
+      <div id="current-order" aria-live="polite" aria-atomic="true"></div>
+    </section>
+
+    <section id="tab-earnings" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-earnings" aria-hidden="true" tabindex="-1">
+      <h2><i class="fa-solid fa-sack-dollar"></i> My Earnings</h2>
+      <div class="earnings-container">
+        <div class="earnings-badge" id="earnings-text" aria-live="polite" aria-atomic="true">₹0</div>
+        <div style="font-size:18px; color:#8B4513; margin-top:1.5em;">Keep delivering for more rewards!</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- District Selection Modal -->
+  <div id="districtModal" role="dialog" aria-modal="true" aria-labelledby="districtModalTitle" tabindex="-1">
+    <div class="modal-content">
+      <h2 id="districtModalTitle">Select Delivery Districts</h2>
+      <p>Where would you like to deliver?</p>
+      <select id="districtSelect" multiple aria-describedby="districtModalDesc" aria-label="Select districts">
+        <option>Kamrup</option>
+        <option>Kamrup Metro</option>
+        <option>Dibrugarh</option>
+        <option>Jorhat</option>
+        <option>Nalbari</option>
+        <option>Sivasagar</option>
+        <option>Barpeta</option>
+        <option>Sonitpur</option>
+        <option>Bongaigaon</option>
+        <option>Goalpara</option>
+        <option>Karimganj</option>
+        <option>Cachar</option>
+        <option>Lakhimpur</option>
+        <option>Tinsukia</option>
+        <option>Dhemaji</option>
+      </select>
+      <button onclick="saveDistricts()">Save</button>
+    </div>
   </div>
 
   <script>
-    let currentTab = null;
+    let currentTab = 'orders';
+    let hasChosenDistricts = false;
 
-    function updateTabStyle(tabId) {
+    function showModal() {
+      document.getElementById('districtModal').style.display = 'block';
+      document.getElementById('districtModal').focus();
+    }
+    function hideModal() {
+      document.getElementById('districtModal').style.display = 'none';
+    }
+
+    async function saveDistricts() {
+      const select = document.getElementById('districtSelect');
+      const selected = Array.from(select.selectedOptions).map(o => o.value);
+      if (!selected.length) {
+        alert('Please choose at least one district.');
+        return;
+      }
+      try {
+        const res = await fetch('/api/set_delivery_districts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ districts: selected })
+        });
+        const data = await res.json();
+        if (data.success) {
+          hasChosenDistricts = true;
+          hideModal();
+          showTab('orders');
+        } else {
+          alert('Error saving districts. Try again.');
+        }
+      } catch (err) {
+        alert('Network error. Try again.');
+      }
+    }
+
+    function updateTabStyle(selectedTab) {
       document.querySelectorAll(".tab-btn").forEach(btn => {
         btn.classList.remove("active");
         btn.setAttribute("aria-selected", "false");
         btn.tabIndex = -1;
       });
-      let btn = document.getElementById("tab-btn-" + tabId);
-      if (btn) {
-        btn.classList.add("active");
-        btn.setAttribute("aria-selected", "true");
-        btn.tabIndex = 0;
-        btn.focus();
-      }
+      const btn = document.getElementById("tab-btn-" + selectedTab);
+      btn.classList.add("active");
+      btn.setAttribute("aria-selected", "true");
+      btn.tabIndex = 0;
+      btn.focus();
     }
 
     function showTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(div => div.style.display = 'none');
-      document.getElementById('tab-' + tabId).style.display = 'block';
       currentTab = tabId;
-      updateTabStyle(tabId);
-      if (tabId === 'orders') detectLocation();
-      if (tabId === 'current') fetchCurrentOrder();
-      if (tabId === 'earnings') fetchEarnings();
+      const tabs = ['orders', 'current', 'earnings'];
+      tabs.forEach(t => {
+        const panel = document.getElementById('tab-' + t);
+        const btn = document.getElementById('tab-btn-' + t);
+        if (t === tabId) {
+          panel.style.display = 'block';
+          panel.setAttribute('aria-hidden', 'false');
+          btn.setAttribute('aria-selected', 'true');
+          btn.tabIndex = 0;
+          btn.focus();
+        } else {
+          panel.style.display = 'none';
+          panel.setAttribute('aria-hidden', 'true');
+          btn.setAttribute('aria-selected', 'false');
+          btn.tabIndex = -1;
+        }
+      });
+
+      if (tabId === 'orders') {
+        loadDistrictOrders();
+      } else if (tabId === 'current') {
+        fetchCurrentOrder();
+      } else if (tabId === 'earnings') {
+        fetchEarnings();
+      }
     }
 
-    function logout() {
-      fetch('/logout')
-        .then(() => window.location.href = '/login')
-        .catch(() => alert('Logout failed, try refreshing the page.'));
-    }
-
-    function orderSafeText(val) {
-      return String(val === undefined || val === null ? '' : val);
-    }
-
-    function detectLocation() {
-      const ordersList = document.getElementById('orders-list');
-      ordersList.innerHTML = '<p style="font-weight:600;color:#8B4513;">Detecting your location...</p>';
-      if (!navigator.geolocation) {
-        ordersList.innerHTML = '<div class="no-orders" style="color:#eb5568;">Geolocation is not supported by your browser.</div>';
+    async function loadDistrictOrders() {
+      if (!hasChosenDistricts) {
+        showModal();
         return;
       }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          fetch(`/api/get_available_orders?lat=${lat}&lng=${lng}`)
-            .then(res => res.json())
-            .then(data => {
-              if (!data.orders || data.orders.length === 0) {
-                ordersList.innerHTML = `<div class="no-orders"><i class="fa-regular fa-hourglass-half"></i> No nearby orders right now.</div>`;
-                return;
-              }
-              ordersList.innerHTML = '';
-              data.orders.forEach(order => {
-                const div = document.createElement('div');
-                div.className = "order-card";
-
-                // Display address: use 'address' field if available else custom fallback
-                const address = order.address || order.delivery_address || 'Address not provided';
-
-                div.innerHTML = `
-                  <div class="order-info" aria-label="Order ${orderSafeText(order._id)} details">
-                    <div>
-                      <span>Order ID:</span> ${orderSafeText(order._id)}
-                    </div>
-                    <div>
-                      <span>Address:</span> ${address}
-                    </div>
-                    <div>
-                      <span>Items:</span> ${Array.isArray(order.items) ? order.items.length : 0}
-                    </div>
-                    <div>
-                      <span>Total:</span> ₹${orderSafeText(order.total)}
-                    </div>
-                  </div>
-                  <button class="accept-btn" aria-label="Accept order ${orderSafeText(order._id)}" onclick="acceptOrder('${order._id}')">Accept Order</button>
-                  <button class="reject-btn" aria-label="Reject order ${orderSafeText(order._id)}" onclick="rejectOrder('${order._id}')">Reject Order</button>
-                `;
-                ordersList.appendChild(div);
-              });
-            })
-            .catch(() => {
-              ordersList.innerHTML = `<div class="no-orders" style="color:#eb5568;">Error fetching orders. Contact support.</div>`;
-            });
-        },
-        () => {
-          ordersList.innerHTML = '<div class="no-orders" style="color:#eb5568;">Location access denied.</div>';
-        },
-        { enableHighAccuracy: true }
-      );
-    }
-
-    function acceptOrder(orderId) {
-      fetch(`/api/accept_delivery/${orderId}`, { method: "POST" })
-        .then(res => res.json())
-        .then(data => {
-          alert(data.message);
-          if (data.success) showTab('current');
-        })
-        .catch(() => alert("Failed to accept order, please try again."));
-    }
-
-    function rejectOrder(orderId) {
-      fetch(`/api/reject_delivery/${orderId}`, { method: "POST" })
-        .then(res => res.json())
-        .then(data => {
-          alert(data.message);
-          if (data.success) detectLocation(); // reload orders list
-        })
-        .catch(() => alert("Failed to reject order, please try again."));
-    }
-
-    function fetchCurrentOrder() {
-      fetch('/api/get_my_current_order')
-        .then(res => res.json())
-        .then(data => {
-          const div = document.getElementById('current-order');
-          div.innerHTML = '';
-          const order = data.order;
-          if (!order) {
-            div.innerHTML = '<div class="no-delivery"><i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i> No current delivery assigned.<br>Go accept a delivery in "Orders Near Me".</div>';
-            return;
-          }
+      const list = document.getElementById('orders-list');
+      list.innerHTML = '<p style="font-weight:600; color:#8B4513;">Loading orders in your selected districts...</p>';
+      try {
+        const res = await fetch('/api/get_available_orders_by_district');
+        if (!res.ok) throw new Error('Fetch error');
+        const data = await res.json();
+        if (!data.orders || data.orders.length === 0) {
+          list.innerHTML = `<div class="no-orders"><i class="fa-regular fa-hourglass-half"></i> No orders available.</div>`;
+          return;
+        }
+        list.innerHTML = '';
+        for (const order of data.orders) {
+          const div = document.createElement('div');
+          div.className = 'order-card';
           const address = order.address || order.delivery_address || 'Address not provided';
           div.innerHTML = `
-            <div style="font-size:1.3em;font-weight:600;margin-bottom:7px;">
-              Order ID: ${orderSafeText(order._id)}
+            <div class="order-info">
+              <div><span>Order ID:</span> ${order._id}</div>
+              <div><span>Address:</span> ${address}</div>
+              <div><span>Items:</span> ${order.items?.length || 0}</div>
+              <div><span>Total:</span> ₹${order.total || ''}</div>
             </div>
-            <div style="margin-bottom:3px;">
-              <span style="color:#A0522D;">Address:</span> ${address}
-            </div>
-            <div>
-              <span style="color:#A0522D;">Status:</span> <span style="text-transform:capitalize;">${orderSafeText(order.delivery_status)}</span>
-            </div>
-            <button onclick="markDelivered('${order._id}')" class="deliver-btn" style="margin-top:14px;">
-              Mark as Delivered
-            </button>
-          `;
+            <button class="accept-btn" onclick="acceptOrder('${order._id}')">Accept Order</button>
+            <button class="reject-btn" onclick="rejectOrder('${order._id}')">Reject Order</button>`;
+          list.appendChild(div);
+        }
+      } catch {
+        list.innerHTML = `<div class="no-orders" style="color:#eb5568;">Error fetching orders.</div>`;
+      }
+    }
+
+    async function acceptOrder(orderId) {
+      try {
+        const res = await fetch(`/api/accept_delivery/${orderId}`, { method: 'POST' });
+        const data = await res.json();
+        alert(data.message);
+        if (data.success) showTab('current');
+      } catch {
+        alert('Error accepting order.');
+      }
+    }
+
+    async function rejectOrder(orderId) {
+      try {
+        const res = await fetch(`/api/reject_delivery/${orderId}`, { method: 'POST' });
+        const data = await res.json();
+        alert(data.message);
+        if (data.success) loadDistrictOrders();
+      } catch {
+        alert('Error rejecting order.');
+      }
+    }
+
+    async function fetchCurrentOrder() {
+      const div = document.getElementById('current-order');
+      div.innerHTML = '';
+      try {
+        const res = await fetch('/api/get_my_current_order');
+        if (!res.ok) throw new Error('Fetch error');
+        const data = await res.json();
+        const order = data.order;
+        if (!order) {
+          div.innerHTML = '<div class="no-delivery"><i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i> No current delivery assigned.</div>';
+          return;
+        }
+        const address = order.address || order.delivery_address || 'Address not provided';
+        div.innerHTML = `
+          <div style="font-size:1.3em; font-weight:600; margin-bottom:7px;">Order ID: ${order._id}</div>
+          <div><span style="color:#A0522D;">Address:</span> ${address}</div>
+          <div><span style="color:#A0522D;">Status:</span> ${order.delivery_status}</div>
+          <button class="deliver-btn" onclick="markDelivered('${order._id}')">Mark as Delivered</button>
+        `;
+      } catch {
+        div.innerHTML = '<div class="no-delivery" style="color:#eb5568;">Error loading current delivery.</div>';
+      }
+    }
+
+    async function markDelivered(orderId) {
+      try {
+        const res = await fetch(`/api/complete_order/${orderId}`, { method: 'POST' });
+        const data = await res.json();
+        alert(data.message);
+        if (data.success) fetchCurrentOrder();
+      } catch {
+        alert('Error marking order as delivered.');
+      }
+    }
+
+    async function fetchEarnings() {
+      try {
+        const res = await fetch('/api/get_earnings');
+        if (!res.ok) throw new Error('Fetch error');
+        const data = await res.json();
+        document.getElementById('earnings-text').innerText = `₹${data.earnings}`;
+      } catch {
+        document.getElementById('earnings-text').innerText = '₹0';
+      }
+    }
+
+    async function logout() {
+      try {
+        await fetch('/logout');
+      } finally {
+        window.location.href = '/login';
+      }
+    }
+
+    window.onload = () => {
+      fetch('/api/has_chosen_districts')
+        .then(res => res.json())
+        .then(d => {
+          hasChosenDistricts = d.chosen;
+          showTab('orders');
         })
         .catch(() => {
-          document.getElementById('current-order').innerHTML = '<div class="no-delivery" style="color:#eb5568;">Failed to load current delivery.</div>';
+          hasChosenDistricts = false;
+          showTab('orders');
         });
-    }
-
-    function markDelivered(orderId) {
-      fetch(`/api/complete_order/${orderId}`, { method: "POST" })
-        .then(res => res.json())
-        .then(data => {
-          alert(data.message);
-          if (data.success) fetchCurrentOrder();
-        })
-        .catch(() => alert("Failed to mark order as delivered, please try again."));
-    }
-
-    function fetchEarnings() {
-      fetch('/api/get_earnings')
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('earnings-text').innerText = `₹${data.earnings}`;
-        })
-        .catch(() => {
-          document.getElementById('earnings-text').innerText = '₹0';
-        });
-    }
-
-    // Default to "Orders Near Me" tab on load
-    window.onload = () => showTab('orders');
+    };
   </script>
 </body>
 </html>

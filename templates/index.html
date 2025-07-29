@@ -4,25 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HaatXpress - Local Shops Delivered</title>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <style>
     body {
       font-family: "Poppins", sans-serif;
       background: #fff;
+      color: #443315;
       margin: 0;
       padding: 0;
-      color: #443315;
       min-height: 100vh;
-      user-select: none;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    a,
-    button {
-      user-select: none;
     }
     header {
       background-color: #5c3a21;
@@ -31,10 +21,10 @@
       justify-content: space-between;
       align-items: center;
       padding: 15px 30px;
-      flex-wrap: wrap;
-      box-shadow: 0 3px 9px rgba(92, 58, 33, 0.7);
+      box-shadow: 0 3px 9px rgba(92,58,33,0.7);
       position: relative;
       z-index: 1000;
+      flex-wrap: wrap;
     }
     .logo {
       display: flex;
@@ -42,11 +32,8 @@
       gap: 10px;
     }
     .logo img {
-      width: 60px;
-      height: 60px;
-      border-radius: 6px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      user-select: none;
+      width: 56px; height: 56px; border-radius: 8px;
+      box-shadow: 0 3px 7px rgba(0,0,0,0.15);
     }
     .location {
       display: flex;
@@ -54,450 +41,302 @@
       gap: 8px;
       font-size: 1rem;
       color: #ffd366;
-    }
-    .location i {
-      color: #d81ba0;
-    }
-    .location button#change-location-btn {
-      margin-left: 8px;
-      background-color: #d81ba0;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 4px 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+      margin-left: 5px;
       user-select: none;
     }
-    .location button#change-location-btn:hover {
-      background-color: #7f58e7;
+    .location i { color: #d81ba0; }
+    .location-select {
+      font-size: 1rem;
+      padding: 5px 12px;
+      border-radius: 7px;
+      border: 1.3px solid #7f58e7;
+      color: #5c3a21;
+      background: #fffdf5;
+      font-weight: 600;
+      min-width: 162px;
+      outline: none;
+      margin-left: 7px;
     }
+    .location-select:focus { border: 1.4px solid #d81ba0; }
     .nav-main {
       display: flex;
       align-items: center;
-      gap: 30px;
+      gap: 22px;
       flex: 1;
       justify-content: center;
+      min-width: 240px;
       user-select: none;
     }
     .category-dropdown {
-      border-radius: 10px;
-      padding: 7px 16px;
-      font-size: 16px;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 15px;
       background: #f7f0ff;
       color: #5c3a21;
-      border: 1.5px solid #d81ba0;
+      border: 1.3px solid #d81ba0;
       font-weight: 600;
       cursor: pointer;
-      transition: border-color 0.3s ease;
+      min-width: 120px;
+      transition: border-color 0.2s;
     }
-    .category-dropdown:hover,
-    .category-dropdown:focus {
+    .category-dropdown:hover, .category-dropdown:focus {
       border-color: #7f58e7;
-      outline: none;
-      box-shadow: 0 0 10px #7f58e7aa;
+      box-shadow:0 0 8px #e1caef80;
     }
     .search-bar {
       display: flex;
       align-items: center;
       border-radius: 12px;
+      background: #fcf3ff;
       overflow: hidden;
-      box-shadow: 0 0 18px #d81ba020;
+      box-shadow: 0 0 15px #d81ba020;
+      border: 1.1px solid #e9cef4;
     }
     .search-bar input {
-      padding: 8px 14px;
-      border: none;
-      font-size: 14px;
+      padding: 9px 15px;
+      border: none; min-width: 190px;
+      background: transparent;
       outline: none;
-      min-width: 220px;
+      font-size: 15px;
       color: #5c3a21;
     }
     .search-bar button {
-      padding: 8px 12px;
-      background-color: #d81ba0;
-      color: white;
       border: none;
-      cursor: pointer;
-      font-weight: 700;
-      transition: background-color 0.3s ease;
-    }
-    .search-bar button:hover {
-      background-color: #7f58e7;
-    }
-    .auth-cart {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      position: relative;
-      user-select: none;
-    }
-    .auth-cart a,
-    .auth-cart span {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1.05em;
-      cursor: pointer;
-      padding: 6px 15px;
-      border-radius: 6px;
       background: #d81ba0;
-      transition: background-color 0.3s ease;
-      user-select: none;
+      color: #fff;
+      padding: 9px 13px 9px 12px;
+      transition: background 0.21s;
+      cursor: pointer;
+      font-size: 1em;
     }
-    .auth-cart a:hover {
-      background-color: #7f58e7;
+    .search-bar button:hover { background: #7f58e7;}
+    .auth-cart {
+      display: flex; align-items: center; gap: 14px;
     }
+    .auth-cart a, .auth-cart span {
+      color: #fff;
+      background: #d81ba0;
+      font-size: 1em;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 7px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.22s;
+    }
+    .auth-cart a:hover { background: #7f58e7;}
     .auth-cart .fa-shopping-cart {
-      color: white !important;
-      font-size: 22px;
+      background: none;
+      font-size: 21px;
+      color: #fff !important;
+      margin-left: 2px;
       position: relative;
     }
     #cart-count {
       position: absolute;
-      top: -8px;
-      right: -10px;
+      top: -8px; right: -10px;
       background: #7f58e7;
-      color: white;
-      font-size: 11px;
-      padding: 2px 6px;
+      color: white; font-size: 11px; padding: 2px 6px;
       border-radius: 50%;
-      font-weight: bold;
-      user-select: none;
+      font-weight: bold; user-select: none;
     }
     .hero {
       text-align: center;
       color: #5c3a21;
-      padding: 60px 20px 38px;
+      padding: 56px 16px 34px;
       max-width: 600px;
-      margin: 20px auto 40px;
+      margin: 20px auto 38px;
       border-radius: 15px;
       background: #fff0fa;
-      box-shadow: 0 0 25px rgba(128, 60, 131, 0.3);
-      user-select: none;
+      box-shadow: 0 0 20px rgba(128, 60, 131, 0.16);
     }
-    .hero h2 {
-      font-size: 2.6rem;
-      letter-spacing: 0.2ch;
-      margin-bottom: 15px;
-      font-weight: 700;
-      color: #7f58e7;
-    }
-    .hero p {
-      font-size: 1.15rem;
-      color: #6a4f73;
-      letter-spacing: 0.02ch;
-      line-height: 1.5;
-    }
+    .hero h2 { font-size: 2.3rem; margin-bottom: 14px; color: #7f58e7; font-weight: 700;}
+    .hero p { font-size: 1.09rem; color: #6a4f73; letter-spacing: 0.01ch; line-height: 1.5;}
     .store-section {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      padding: 40px 4vw;
-      gap: 30px;
+      padding: 32px 3vw;
+      gap: 28px;
       max-width: 1200px;
-      margin: 0 auto 60px;
-      user-select: none;
+      margin: 0 auto 58px;
     }
     .store-card {
       background: #fff0fa;
       color: #5c3a21;
-      padding: 22px 14px 20px;
-      border-radius: 16px;
-      min-width: 240px;
-      max-width: 265px;
-      box-shadow: 0 6px 12px #b97fc0aa;
+      padding: 18px 10px 16px;
+      border-radius: 13px;
+      min-width: 200px;
+      max-width: 240px;
+      box-shadow: 0 6px 12px #b97fc099;
       cursor: pointer;
-      transition: box-shadow 0.25s, transform 0.21s;
-      border: 1px solid #d81ba0;
+      transition: box-shadow .22s, transform .17s;
+      border: 1.1px solid #d81ba0;
       text-align: center;
       position: relative;
-      user-select: none;
     }
     .store-card:hover {
       background: #e9d6f9;
-      box-shadow: 0 14px 36px #7f58e7aa;
-      transform: translateY(-6px) scale(1.06);
+      box-shadow: 0 12px 26px #7f58e7aa;
+      transform: translateY(-5px) scale(1.05);
       border-color: #7f58e7;
     }
     .store-card img {
-      width: 72px;
-      height: 72px;
-      margin: 8px auto 16px auto;
-      display: block;
-      border-radius: 15px;
+      width: 66px;
+      height: 66px;
+      margin: 8px auto 13px;
+      border-radius: 11px;
       object-fit: cover;
-      box-shadow: 0 6px 14px #ae73cdcc;
-      user-select: none;
+      box-shadow: 0 5px 12px #ae73cdbe;
     }
     .store-card h3 {
-      margin: 6px 0 8px;
-      font-size: 1.2em;
+      margin: 4px 0 6px;
+      font-size: 1.12em;
       font-weight: 700;
+      letter-spacing: 0.03ch;
       color: #5c3a21;
-      user-select: text;
     }
     .category-badge {
       display: inline-block;
-      border-radius: 9px;
-      font-size: 13px;
-      color: #4a3052;
+      border-radius: 7px;
+      font-size: 12px;
       background: #d5c1f7;
-      padding: 3px 13px;
-      margin-bottom: 9px;
+      color: #4a3052;
+      padding: 3px 11px;
+      margin-bottom: 6px;
       font-weight: 600;
       box-shadow: 0 1.5px 0 #bfb5f8;
-      user-select: none;
     }
     .store-dist {
       font-size: 12px;
       color: #835f9e;
-      margin: 4px;
+      margin: 3px;
+      font-weight: 500;
+    }
+    /* Item card (for shop product list) */
+    .item-card {
+      background: #edddfa;
+      border: 1px solid #bd57cf;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #e5a7ff44;
+      padding: 18px 10px 14px;
+      margin: 0 1.8vw 15px 1.8vw;
+      width: 208px;
+      max-width: 97vw;
+      text-align: center;
+      display: inline-block;
+      vertical-align: top;
+      transition: box-shadow 0.16s;
+      cursor: default;
       user-select: none;
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 10%;
-      left: 10%;
-      width: 80%;
-      max-width: 420px;
-      min-width: 280px;
-      background: #422d4bdd;
-      color: #f3eefd;
-      border-radius: 16px;
-      padding: 36px 34px 28px 34px;
-      overflow-y: auto;
-      z-index: 9999;
-      box-shadow: 0 5px 43px #765097cc;
-      user-select: none;
+    .item-card img {
+      width: 64px; height: 64px; border-radius: 8px;
+      object-fit: cover;
+      margin-bottom: 10px;
+      background: #fff;
     }
-    .modal.active {
-      display: block;
+    .item-card h4 {
+      margin: 2px 0 4px; font-size: 1.09em; color: #6a367e; font-weight: 700;
     }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
+    .item-type-badge {
+      display:inline-block;background:#f6edfe;color:#772677;border-radius:6px;padding:2px 10px;font-size:12px;font-weight:600;margin-bottom:7px;
     }
-    .modal-close {
-      background: #7f58e7;
-      border: none;
-      padding: 10px 19px;
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
-      font-weight: 600;
-      user-select: none;
-      transition: background-color 0.25s ease;
-    }
-    .modal-close:hover {
+    .item-card-desc {font-size:0.99em;color:#958aad;margin:2px 0 7px;}
+    .item-card-price {font-size:1.09em;color:#D81BA0;font-weight:bold;letter-spacing:.02ch;}
+    .item-card button {
       background: #d81ba0;
-    }
-    .modal h2 {
-      margin: 0;
-      color: #c4a7f9;
-      font-weight: 700;
-      user-select: none;
-    }
-    .modal ul {
-      margin: 15px 0 0 0;
-      padding: 0;
-      list-style: none;
-      max-height: 50vh;
-      overflow-y: auto;
-    }
-    .modal li {
-      margin: 10px 0;
-      padding: 7px 14px;
-      border-radius: 10px;
-      background: #60486c;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2.5px 12px #8f7fc299;
-      font-size: 1em;
-      user-select: none;
-    }
-    .modal li .item-info {
-      display: flex;
-      flex-direction: column;
-      max-width: 75%;
-    }
-    .modal li .item-name {
-      font-weight: 700;
-      margin-bottom: 3px;
-      color: #e5d1f5;
-    }
-    .modal li .item-desc {
-      font-size: 0.85em;
-      color: #c9b5de;
-    }
-    .modal li .item-price {
-      font-weight: 700;
-      color: #d1adf4;
-      margin-right: 10px;
-      white-space: nowrap;
-      user-select: text;
-    }
-    .modal li button {
-      padding: 6px 14px;
-      background: #d81ba0;
-      color: white;
+      color: #fff;
       border: none;
-      border-radius: 10px;
+      border-radius: 7px;
+      padding: 6px 17px;
+      margin-top: 8px;
       cursor: pointer;
       font-weight: 700;
-      transition: background-color 0.3s ease;
-      user-select: none;
-      white-space: nowrap;
+      font-size: .97em;
+      transition: background .18s;
     }
-    .modal li button:hover {
-      background: #7f58e7;
-    }
-    #total-price {
-      margin-top: 18px;
-      font-size: 1.05em;
-      font-weight: 700;
-      user-select: none;
-      color: #c299f5;
-    }
+    .item-card button:hover { background: #7f58e7;}
+    .item-card:focus-within,
+    .item-card:focus-visible { outline:2px solid #9659ba; }
+    /* Modal for login */
     .login-modal {
       display: none;
       position: fixed;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(92, 58, 33, 0.9);
-      z-index: 4000;
-      text-align: center;
-      color: white;
-      min-height: 0;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(48, 21, 62, .83);
+      z-index: 5001;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
-      animation: fadein 0.3s ease-in;
-      user-select: none;
     }
-    .login-modal.active {
-      display: flex;
+    .login-modal.active { display: flex; }
+    .login-unique-card {
+      background: linear-gradient(135deg,#ffeeff 40%,#ddbefc 100%);
+      color: #7c3889;
+      border-radius: 18px;
+      box-shadow: 0 3px 34px #bb54e8aa;
+      min-width: 260px;
+      max-width: 340px;
+      width: 92vw;
+      padding: 36px 27px 28px;
+      margin: auto;
+      text-align: center;
+      border: 2.4px solid #9e57b7;
+      position: relative;
+      animation: popcard .30s;
     }
-    @keyframes fadein {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
+    @keyframes popcard {
+      from { transform: scale(0.85); opacity: 0;}
+      to { transform: scale(1); opacity: 1;}
     }
-    .login-modal h2 {
-      font-size: 1.8em;
-      margin-bottom: 14px;
-      color: #e1bee7;
-      user-select: none;
+    .login-unique-card h2 {
+      font-size: 2em; font-weight: 800; color: #a032c2; margin-bottom: 10px;
+      font-family: 'Poppins',sans-serif;
+      letter-spacing: .02ch;
     }
-    .login-modal p {
-      font-size: 1.2em;
-      margin-bottom: 30px;
-      color: #d8b6e1;
-      user-select: none;
+    .login-unique-card p {
+      color: #6a277b; font-size: 1.1em; font-weight: 500; margin-bottom: 21px;
+      line-height: 1.5;
     }
-    .login-modal a {
-      background: #d81ba0;
-      display: inline-block;
-      margin: 0 16px;
-      padding: 16px 40px;
-      border-radius: 10px;
-      color: white;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 1.2em;
-      transition: background-color 0.3s ease;
-      user-select: none;
-    }
-    .login-modal a:hover {
-      background: #7f58e7;
-    }
-    .login-modal button {
-      margin-top: 30px;
-      padding: 10px 36px;
-      border-radius: 8px;
-      background: #e74c3c;
-      color: white;
+    .login-unique-btn {
+      background: linear-gradient(87deg,#d81ba0 70%,#7f58e7);
+      color: #fff;
       border: none;
-      font-size: 1.1em;
+      border-radius: 7px;
+      padding: 11px 33px;
+      font-size: 1.09em;
       font-weight: 700;
+      margin: 0 6px 12px 6px;
+      transition: background .15s;
       cursor: pointer;
-      user-select: none;
-      transition: background-color 0.3s ease;
+      box-shadow: 0 2px 16px #dab6ee22;
+      outline:none;
     }
-    .login-modal button:hover {
-      background: #bf1e24;
+    .login-unique-btn:hover {
+      background: linear-gradient(87deg,#7f58e7 60%,#d81ba0 90%)
     }
-    #locationModal.login-modal.active {
-      display: flex !important;
-      flex-direction: column;
-      background: rgba(92, 58, 33, 0.9);
-      z-index: 5000;
-      padding: 30px 20px;
+    .login-unique-card .or {
+      display: block; color: #ad80d6; margin:6px 0 16px 0; font-size: 13px; font-weight: 700;
+      letter-spacing: .06ch;
     }
-    #locationModal h2,
-    #locationModal p {
-      color: #f5d0fa;
-      user-select: none;
+    .close-login-modal {
+      background: none; border: none; color: #e14d96; font-size: 1.7em; font-weight: 700;
+      position: absolute; top: 7px; right: 18px; cursor: pointer; outline:none;
+      transition: color .1s;
+      padding: 0 3px;
     }
-    #locationModal input {
-      padding: 12px 16px;
-      border-radius: 10px;
-      width: 80%;
-      max-width: 320px;
-      font-size: 1em;
-      border: 2px solid #d81ba0;
-      margin-bottom: 15px;
-      outline: none;
-      color: #5c3a21;
-      font-weight: 700;
-      user-select: text;
-      transition: border-color 0.3s ease;
+    .close-login-modal:hover { color: #723b8c;}
+    footer {
+      color: #9575cd; font-size: 1em;
+      margin-bottom: 16px; margin-top: 10px; user-select: none; background:none;
     }
-    #locationModal input:focus {
-      border-color: #7f58e7;
-      box-shadow: 0 0 7px #7f58e7cc;
-    }
-    #locationModal button {
-      padding: 12px 32px;
-      border-radius: 10px;
-      background: #d81ba0;
-      color: white;
-      font-weight: 700;
-      font-size: 1.15em;
-      cursor: pointer;
-      border: none;
-      user-select: none;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 4px 12px #d81baacc;
-    }
-    #locationModal button:hover {
-      background: #7f58e7;
-      box-shadow: 0 5px 15px #7f58e7cc;
-    }
-    @media (max-width: 700px) {
-      .store-section {
-        flex-direction: column;
-        padding: 30px 4vw;
-      }
-      .store-card {
-        width: auto;
-        max-width: 100%;
-      }
-      .modal {
-        left: 2vw;
-        width: 96vw;
-      }
+    footer a { color:#b07def; font-weight:600;}
+    @media (max-width:700px) {
+      header {padding:8px 6vw; flex-direction: column;}
+      .nav-main {padding:10px 0; min-width:115px;}
+      .store-section { flex-direction: column; padding:20px 2vw;}
+      .store-card,.item-card {max-width: 97vw;}
     }
   </style>
 </head>
@@ -507,11 +346,55 @@
       <img src="{{ url_for('static', filename='images/jiboncare_Logo.png') }}" alt="HaatXpress Logo" />
       <div class="location" aria-live="polite" aria-atomic="true">
         <i class="fas fa-map-marker-alt"></i>
-        <span id="location-text">Please set your location</span>
+        <select id="location-select" class="location-select" onchange="handleLocationChange()" aria-label="Choose Assam location">
+          <option value="">Select Area, Town or District</option>
+          <optgroup label="Kamrup Metro">
+            <option value="Guwahati">Guwahati</option>
+            <option value="Khanapara">Khanapara</option>
+            <option value="Maligaon">Maligaon</option>
+            <option value="Beltola">Beltola</option>
+          </optgroup>
+          <optgroup label="Dibrugarh">
+            <option value="Dibrugarh">Dibrugarh Town</option>
+            <option value="Chabua">Chabua</option>
+            <option value="Naharkatia">Naharkatia</option>
+          </optgroup>
+          <optgroup label="Jorhat">
+            <option value="Jorhat">Jorhat Town</option>
+            <option value="Teok">Teok</option>
+            <option value="Titabor">Titabor</option>
+          </optgroup>
+          <optgroup label="Cachar">
+            <option value="Silchar">Silchar</option>
+            <option value="Katigorah">Katigorah</option>
+          </optgroup>
+          <optgroup label="Barpeta">
+            <option value="Barpeta">Barpeta</option>
+            <option value="Howly">Howly</option>
+          <optgroup label="Bajali">
+            <option value="Pathsala">Pathsala</option>
+          </optgroup>
+          </optgroup>
+          <optgroup label="Sonitpur">
+            <option value="Tezpur">Tezpur</option>
+            <option value="Biswanath">Biswanath Chariali</option>
+          </optgroup>
+          <optgroup label="More">
+            <option value="Tinsukia">Tinsukia</option>
+            <option value="Sibsagar">Sibsagar</option>
+            <option value="Nagaon">Nagaon</option>
+            <option value="Mangaldoi">Mangaldoi</option>
+            <option value="Goalpara">Goalpara</option>
+            <option value="Dhemaji">Dhemaji</option>
+            <option value="Lakhimpur">Lakhimpur</option>
+            <option value="Dhubri">Dhubri</option>
+            <option value="Bongaigaon">Bongaigaon</option>
+          </optgroup>
+        </select>
       </div>
     </div>
     <div class="nav-main">
-      <label for="categorySelect" style="color:#fff;font-weight:600;margin-right:7px;">Select Category:</label>
+      <label for="categorySelect" style="color:#fff;font-weight:600;margin-right:6px;">Category:</label>
       <select id="categorySelect" class="category-dropdown" onchange="categoryChanged()" aria-label="Select category">
         <option value="">All</option>
         <option value="grocery">Grocery</option>
@@ -519,13 +402,7 @@
         <option value="food-item">Restaurant</option>
       </select>
       <div class="search-bar">
-        <input
-          id="searchInput"
-          type="text"
-          placeholder="Search store, product or location..."
-          onkeyup="triggerSmartSearch()"
-          aria-label="Search stores, products or location"
-        />
+        <input id="searchInput" type="text" placeholder="Search store or item…" onkeyup="triggerSmartSearch()" aria-label="Search stores, items or seller"/>
         <button aria-label="Search"><i class="fas fa-search"></i></button>
       </div>
     </div>
@@ -546,427 +423,285 @@
   </header>
 
   <section class="hero" role="banner">
-    <h2>Welcome to HaatXpress</h2>
-    <p>
-      Connecting you directly to local shops - groceries, medicines, food, all
-      from your trusted neighborhood within your zone. Stay happy😀❤️
-    </p>
+    <h1>Welcome to JibonCare</h1>
+    <p>Connecting you directly to local shops groceries, medicines, food, all from your trusted neighborhood within your zone. </p><br><p>Stay happy 😀❤️</p>
   </section>
-
   <section class="store-section" id="store-list" aria-label="List of shops">
-    <div style="color:#5C3A21;text-align:center;width:100%;">Please set your location to see shops.</div>
+    <div style="color:#5C3A21;text-align:center;width:100%;">Please select your location in the dropdown to see shops.</div>
   </section>
-
   <section class="store-section" id="items-list" aria-label="Items uploaded by selected shop">
     <div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>
   </section>
 
-  <!-- Location Input Modal -->
-  <div
-    class="modal login-modal active"
-    id="locationModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="locationModalTitle"
-    tabindex="-1"
-  >
-    <h2 id="locationModalTitle">Where do you want to order from?</h2>
-    <p>Please enter your area, city, or PIN code to see sellers near you.</p>
-    <input
-      type="text"
-      id="user-location-input"
-      placeholder="Enter your location"
-      aria-label="Enter your location"
-    />
-    <br />
-    <button onclick="submitUserLocation()">Confirm Location</button>
-  </div>
 
-  <!-- Login/Register Prompt Modal -->
-  <div
-    class="login-modal"
-    id="loginPromptModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="loginPromptTitle"
-    tabindex="-1"
-    aria-hidden="true"
-  >
-    <h2 id="loginPromptTitle">Please Log In / Register</h2>
-    <p>You need to be logged in to add items to your cart.</p>
-    <a href="/login" role="button" aria-label="Go to Login">Login</a>
-    <a href="/register" role="button" aria-label="Go to Register">Register</a>
-    <button onclick="closeLoginPrompt()" aria-label="Close">Cancel</button>
-  </div>
-
-  <!-- Shop Menu Modal -->
-  <div
-    class="modal"
-    id="menuModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="menuModalTitle"
-    tabindex="-1"
-    aria-hidden="true"
-  >
-    <div class="modal-header">
-      <h2 id="menuModalTitle">Shop Menu</h2>
-      <button
-        class="modal-close"
-        aria-label="Close Menu"
-        onclick="closeMenuModal()"
-      >
-        &times;
-      </button>
-    </div>
-    <div id="menuContent">
-      <p>Loading menu...</p>
+  <!-- Stylish Modal for Login/Register -->
+  <div class="login-modal" id="loginPromptModal" tabindex="-1" aria-hidden="true">
+    <div class="login-unique-card" tabindex="0" aria-modal="true" role="dialog" aria-labelledby="loginPromptTitle">
+      <button class="close-login-modal" onclick="closeLoginPrompt()" aria-label="Close">&times;</button>
+      
+      <p>To add items to your cart<br>please Login or Register below.</p>
+      <a href="/login" class="login-unique-btn" aria-label="Login">Login</a>
+      <span class="or">OR</span>
+      <a href="/register" class="login-unique-btn" aria-label="Register">Register</a>
     </div>
   </div>
-<center>
-  <footer role="contentinfo">
-    <p>&copy; 2025 HaatXpress. Made with 🧡 for your neighborhood.</p>
-    <p>
-      Contact: <a href="mailto:support@haatexpress.com">support@haatexpress.com</a>
-    </p>
-  </footer>
-</center>
-  <script>
-    // Variables
-    let userLocation = null;
-    const isUserLoggedIn = !!document.getElementById("user-email");
-    let cartCount = 0;
-    let CURRENT_SHOPS = [];
-    let CURRENT_CATEGORY = "";
-    let SEARCH_TEXT = "";
 
-    // Submit user location
-    function submitUserLocation() {
-      const input = document.getElementById("user-location-input");
-      const location = input.value.trim();
-      if (!location) {
-        alert("Please enter a valid location.");
-        return;
-      }
-      userLocation = location;
-      document.getElementById("locationModal").classList.remove("active");
-      updateHeaderLocation();
-      fetchShopsByArea(userLocation);
-    }
+  <center>
+    <footer role="contentinfo">
+      <p>&copy; 2025 JibonCare. Made with 🧡 for your neighborhood.</p>
+      <p>Contact: <a href="mailto:support@haatexpress.com">support@haatexpress.com</a></p>
+    </footer>
+  </center>
 
-    // Update header location display and button
-    function updateHeaderLocation() {
-      const locationText = document.getElementById("location-text");
-      locationText.textContent = userLocation + " ";
-      if (!document.getElementById("change-location-btn")) {
-        const locationDiv = locationText.parentElement;
-        const btn = document.createElement("button");
-        btn.id = "change-location-btn";
-        btn.textContent = "Change";
-        btn.style.cssText =
-          "margin-left:8px; background:#D81BA0; color:#fff; border:none; border-radius:5px; padding:3px 10px; cursor:pointer; font-weight:600;";
-        btn.setAttribute("aria-label", "Change your location");
-        btn.onmouseenter = () => (btn.style.backgroundColor = "#7f58e7");
-        btn.onmouseleave = () => (btn.style.backgroundColor = "#D81BA0");
-        btn.onclick = openLocationModal;
-        locationDiv.appendChild(btn);
-      }
-    }
-    function openLocationModal() {
-      document.getElementById("locationModal").classList.add("active");
-      document.getElementById("user-location-input").value = "";
-    }
+<script>
+let userLocation = "";
+let isUserLoggedIn = !!document.getElementById("user-email");
+let cartCount = 0;
+let CURRENT_SHOPS = [];
+let CURRENT_CATEGORY = "";
+let SEARCH_TEXT = "";
+let ALL_ITEMS_BY_SHOP = {}; // {shopId: [items]}
 
-    // Fetch shops by area from API
-    function fetchShopsByArea(area) {
-      const storeList = document.getElementById("store-list");
-      storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Loading shops...</div>`;
-      fetch(`/api/shops?area=${encodeURIComponent(area)}`)
-        .then((response) => {
-          if (!response.ok) throw new Error("API error");
-          return response.json();
-        })
-        .then((data) => {
-          CURRENT_SHOPS = data.shops || data;
-          CURRENT_CATEGORY = "";
-          SEARCH_TEXT = "";
-          showShops(CURRENT_SHOPS);
-          resetFilters();
-        })
-        .catch(() => {
-          storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Error loading shops.</div>`;
-        });
-    }
+// Restore location for returning/just-logged-in users
+function restoreLocationFromLocalStorage() {
+  const saved = window.localStorage.getItem('haatxpress_user_location');
+  if (saved && document.getElementById('location-select')) {
+    document.getElementById('location-select').value = saved;
+    userLocation = saved;
+    fetchShopsByArea(userLocation);
+  }
+}
+function saveLocationToLocalStorage(loc) {
+  try { window.localStorage.setItem('haatxpress_user_location', loc); } catch(e){}
+}
 
-    // Show shops in UI
-    function showShops(shops) {
-      const storeList = document.getElementById("store-list");
-      if (!shops || shops.length === 0) {
-        storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No shops found in your area.</div>`;
-        return;
-      }
-      storeList.innerHTML = "";
-      shops.forEach((shop) => {
-        const shopElem = document.createElement("div");
-        shopElem.className = "store-card";
-        shopElem.tabIndex = 0;
-        shopElem.setAttribute("role", "region");
-        shopElem.setAttribute("aria-label", `${shop.name} shop`);
-        shopElem.innerHTML = `
-          <img src="${shop.image_url || "/static/default-avatar.png"}" alt="${shop.name} shop image" />
-          <div class="category-badge">${capitalize(shop.category)}</div>
-          <h3>${shop.name}</h3>
-          <div class="store-dist">${shop.distance ? `${shop.distance} km away` : ""}</div>
-          `;
-        shopElem.addEventListener("click", () => {
-          openMenuModal(shop.id, shop.name);
-          if (shop.email) fetchItemsBySeller(shop.email);
-          else
-            document.getElementById("items-list").innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No items info available for this shop.</div>`;
-        });
-        shopElem.addEventListener("keypress", (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            openMenuModal(shop.id, shop.name);
-            if (shop.email) fetchItemsBySeller(shop.email);
-          }
-        });
-        storeList.appendChild(shopElem);
+// LOCATION
+function handleLocationChange() {
+  const select = document.getElementById('location-select');
+  const value = select.value;
+  userLocation = value;
+  if (!value) {
+    document.getElementById('store-list').innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Please select your location in the dropdown to see shops.</div>`;
+    document.getElementById('items-list').innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>`;
+    saveLocationToLocalStorage('');
+    return;
+  }
+  select.style.background = '#edf4fd';
+  saveLocationToLocalStorage(userLocation);
+  fetchShopsByArea(userLocation);
+}
+
+// Fetch shops with items pre-fetched for fast product search
+function fetchShopsByArea(area) {
+  const storeList = document.getElementById("store-list");
+  storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Loading shops...</div>`;
+  document.getElementById('items-list').innerHTML = '<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>';
+  fetch(`/api/shops?area=${encodeURIComponent(area)}`)
+    .then((response) => {
+      if (!response.ok) throw new Error("API error");
+      return response.json();
+    })
+    .then((data) => {
+      CURRENT_SHOPS = data.shops || data || [];
+      // Preload items for each shop for fast smart search
+      let shopFetches = [];
+      ALL_ITEMS_BY_SHOP = {};
+      CURRENT_SHOPS.forEach(shop => {
+        if (!shop || !shop.email) return;
+        let fetchTask = fetch(`/api/items?seller_email=${encodeURIComponent(shop.email)}`)
+          .then(res => res.ok ? res.json() : {items:[]})
+          .then(r => { ALL_ITEMS_BY_SHOP[shop.id] = r.items || []; });
+        shopFetches.push(fetchTask);
       });
-      // Clear items-list if shops refreshed
-      document.getElementById("items-list").innerHTML =
-        '<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>';
-    }
-
-    // Fetch items for selected seller
-    function fetchItemsBySeller(sellerEmail) {
-      const itemsList = document.getElementById("items-list");
-      itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Loading items...</div>`;
-      fetch(`/api/items?seller_email=${encodeURIComponent(sellerEmail)}`)
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch items");
-          return res.json();
-        })
-        .then((data) => {
-          const items = data.items || [];
-          if (items.length === 0) {
-            itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No items found for this shop.</div>`;
-            return;
-          }
-          displayItems(items);
-        })
-        .catch(() => {
-          itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Error loading items.</div>`;
-        });
-    }
-
-    // Show items in UI
-    function displayItems(items) {
-      const itemsList = document.getElementById("items-list");
-      itemsList.innerHTML = "";
-      items.forEach((item) => {
-        const card = document.createElement("div");
-        card.className = "store-card";
-        card.innerHTML = `
-          <img src="${item.image_url || "/static/default-avatar.png"}" alt="${item.name}" />
-          <div class="category-badge">${capitalize(item.type)}</div>
-          <h3>${item.name}</h3>
-          <div class="store-dist">₹${item.price.toFixed(2)}</div>
-          <button aria-label="Add ${item.name} to cart" style="background:#D81BA0; color:#fff; border:none; border-radius:8px; padding:6px 12px; cursor:pointer; font-weight:bold;">
-          Add to Cart
-          </button>
-          `;
-        const btn = card.querySelector("button");
-        btn.addEventListener("click", () => handleAddToCart(item));
-        itemsList.appendChild(card);
+      Promise.all(shopFetches).then(() => {
+        showShops(CURRENT_SHOPS);
+        resetFilters();
       });
-    }
+    })
+    .catch(() => {
+      storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Error loading shops.</div>`;
+    });
+}
 
-    function capitalize(str) {
-      if (!str) return "";
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    // Menu modal controls
-    function openMenuModal(shopId, shopName) {
-      const menuModal = document.getElementById("menuModal");
-      const menuTitle = document.getElementById("menuModalTitle");
-      const menuContent = document.getElementById("menuContent");
-
-      menuTitle.textContent = `Menu - ${shopName}`;
-      menuContent.innerHTML = `<p>Loading menu...</p>`;
-      menuModal.setAttribute("aria-hidden", "false");
-      menuModal.classList.add("active");
-      menuModal.focus();
-
-      fetch(`/api/shop/${shopId}/menu`)
-        .then((resp) => {
-          if (!resp.ok) throw new Error("Failed to fetch menu");
-          return resp.json();
-        })
-        .then((data) => {
-          if (!data || !Array.isArray(data.menu) || data.menu.length === 0) {
-            menuContent.innerHTML = `<p>No menu items found.</p>`;
-            return;
-          }
-          renderMenuItems(data.menu);
-        })
-        .catch(() => {
-          menuContent.innerHTML = `<p>Failed to load menu. Please try again later.</p>`;
-        });
-    }
-
-    function renderMenuItems(items) {
-      const menuContent = document.getElementById("menuContent");
-      menuContent.innerHTML = "<ul></ul>";
-      const ul = menuContent.querySelector("ul");
-      items.forEach((item) => {
-        const li = document.createElement("li");
-        const itemInfo = document.createElement("div");
-        itemInfo.className = "item-info";
-
-        const itemName = document.createElement("div");
-        itemName.className = "item-name";
-        itemName.textContent = item.name;
-
-        const itemDesc = document.createElement("div");
-        itemDesc.className = "item-desc";
-        if (item.description) {
-          itemDesc.textContent = item.description;
-        } else {
-          itemDesc.textContent = "";
-        }
-
-        itemInfo.appendChild(itemName);
-        if (item.description) itemInfo.appendChild(itemDesc);
-
-        const itemPrice = document.createElement("div");
-        itemPrice.className = "item-price";
-        itemPrice.textContent = `₹${item.price.toFixed(2)}`;
-
-        const addButton = document.createElement("button");
-        addButton.textContent = "Add to Cart";
-        addButton.setAttribute("aria-label", `Add ${item.name} to cart`);
-        addButton.onclick = () => handleAddToCart(item);
-
-        li.appendChild(itemInfo);
-        li.appendChild(itemPrice);
-        li.appendChild(addButton);
-
-        ul.appendChild(li);
-      });
-    }
-
-    function closeMenuModal() {
-      const menuModal = document.getElementById("menuModal");
-      menuModal.classList.remove("active");
-      menuModal.setAttribute("aria-hidden", "true");
-    }
-
-    // Add to cart handler
-    function handleAddToCart(item) {
-      if (!isUserLoggedIn) {
-        openLoginPrompt();
-        return;
-      }
-      cartCount++;
-      updateCartCount();
-      alert(`Added "${item.name}" to cart.`);
-    }
-
-    function updateCartCount() {
-      const cartCountElem = document.getElementById("cart-count");
-      cartCountElem.textContent = cartCount;
-    }
-
-    // Login prompt modal controls
-    function openLoginPrompt() {
-      const loginPrompt = document.getElementById("loginPromptModal");
-      loginPrompt.classList.add("active");
-      loginPrompt.setAttribute("aria-hidden", "false");
-      loginPrompt.focus();
-    }
-
-    function closeLoginPrompt() {
-      const loginPrompt = document.getElementById("loginPromptModal");
-      loginPrompt.classList.remove("active");
-      loginPrompt.setAttribute("aria-hidden", "true");
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        const menuModal = document.getElementById("menuModal");
-        if (menuModal.classList.contains("active")) {
-          closeMenuModal();
-        }
-        const loginPrompt = document.getElementById("loginPromptModal");
-        if (loginPrompt.classList.contains("active")) {
-          closeLoginPrompt();
-        }
-        const locationModal = document.getElementById("locationModal");
-        if (locationModal.classList.contains("active")) {
-          locationModal.classList.remove("active");
-        }
+// Show shops in UI (filtered)
+function showShops(shops) {
+  const storeList = document.getElementById("store-list");
+  if (!shops || shops.length === 0) {
+    storeList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No shops found in this area.</div>`;
+    return;
+  }
+  storeList.innerHTML = "";
+  shops.forEach((shop) => {
+    const shopElem = document.createElement("div");
+    shopElem.className = "store-card";
+    shopElem.tabIndex = 0;
+    shopElem.setAttribute("role", "button");
+    shopElem.setAttribute("aria-label", `${shop.name} shop`);
+    shopElem.innerHTML = `
+      <img src="${shop.image_url || "/static/default-avatar.png"}" alt="${shop.name} shop image" />
+      <div class="category-badge">${capitalize(shop.category)}</div>
+      <h3>${shop.name}</h3>
+      <div class="store-dist">${shop.distance ? `${shop.distance} km away` : ""}</div>
+    `;
+    shopElem.addEventListener("click", () => {
+      displayItemsDirect(shop);
+    });
+    shopElem.addEventListener("keypress", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault(); displayItemsDirect(shop);
       }
     });
+    storeList.appendChild(shopElem);
+  });
+  document.getElementById("items-list").innerHTML =
+    `<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>`;
+}
+function resetFilters() {
+  document.getElementById("categorySelect").selectedIndex = 0;
+  document.getElementById("searchInput").value = "";
+  CURRENT_CATEGORY = "";
+  SEARCH_TEXT = "";
+}
 
-    // Category change triggers shop filter
-    function categoryChanged() {
-      const categorySelect = document.getElementById("categorySelect");
-      CURRENT_CATEGORY = categorySelect.value;
-      applyFilters();
+// Fetch and display items for shop immediately (no modal)
+function displayItemsDirect(shop) {
+  const itemsList = document.getElementById("items-list");
+  itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Loading items...</div>`;
+  if (ALL_ITEMS_BY_SHOP && ALL_ITEMS_BY_SHOP[shop.id] && ALL_ITEMS_BY_SHOP[shop.id].length) {
+    setTimeout(()=>renderItemCards(ALL_ITEMS_BY_SHOP[shop.id]),120); // for "Loading" message fade
+  } else if (shop.email) {
+    fetch(`/api/items?seller_email=${encodeURIComponent(shop.email)}`)
+      .then((res) => res.ok ? res.json() : {items:[]})
+      .then((data) => {
+        let items = data.items || [];
+        ALL_ITEMS_BY_SHOP[shop.id] = items.slice();
+        renderItemCards(items);
+      })
+      .catch(() => {
+        itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">Error loading items.</div>`;
+      });
+  } else {
+    itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No items info available for this shop.</div>`;
+  }
+}
+function renderItemCards(items) {
+  const itemsList = document.getElementById("items-list");
+  if (!items || items.length===0) {
+    itemsList.innerHTML = `<div style="color:#5C3A21;text-align:center;width:100%;">No items found for this shop.</div>`;
+    return;
+  }
+  itemsList.innerHTML = "";
+  items.forEach((item) => {
+    const card = document.createElement("div");
+    card.className = "item-card";
+    card.tabIndex = 0;
+    card.innerHTML = `
+      <div class="item-type-badge">${capitalize(item.type)}</div>
+      <img src="${item.image_url || "/static/default-avatar.png"}" alt="${item.name}" />
+      <h4>${item.name}</h4>
+      <div class="item-card-desc">${item.description?item.description:''}</div>
+      <div class="item-card-price">₹${item.price && item.price>=0 ? item.price.toFixed(2):'--'}</div>
+      <button aria-label="Add ${item.name} to cart">Add to Cart</button>
+    `;
+    card.querySelector('button').onclick = ()=>handleAddToCart(item);
+    itemsList.appendChild(card);
+  });
+}
+
+// "Add to Cart" button handler
+function handleAddToCart(item) {
+  if (!isUserLoggedIn) {
+    openLoginPrompt();
+    return;
+  }
+  cartCount++;
+  updateCartCount();
+  alert(`Added "${item.name}" to cart.`); // Replace with your real cart logic/UI
+}
+function updateCartCount() {
+  document.getElementById("cart-count").textContent = cartCount;
+}
+
+// Stylish Login Modal controls
+function openLoginPrompt() {
+  const m = document.getElementById("loginPromptModal");
+  m.classList.add("active");
+  m.setAttribute("aria-hidden", "false");
+  setTimeout(()=>{try{m.querySelector('.login-unique-card').focus();}catch(e){}},140);
+}
+function closeLoginPrompt() {
+  const m = document.getElementById("loginPromptModal");
+  m.classList.remove("active");
+  m.setAttribute("aria-hidden", "true");
+}
+
+// Filter/SMART SEARCH: matches shop name, address, product names—even product search!
+function triggerSmartSearch() {
+  SEARCH_TEXT = document.getElementById("searchInput").value.trim().toLowerCase();
+  if (!CURRENT_SHOPS || !Array.isArray(CURRENT_SHOPS)) return;
+  if (!SEARCH_TEXT) {
+    applyFilters();
+    return;
+  }
+  // Search across shops and their items
+  let results = [];
+  let searchByItem = [];
+  CURRENT_SHOPS.forEach(shop=>{
+    const sText = ((shop.name||"")+" "+(shop.address||"")+" "+(shop.contact||"")).toLowerCase();
+    // Find if this shop has an item that matches
+    let match = false, foundItem=null;
+    if (ALL_ITEMS_BY_SHOP[shop.id]) {
+      ALL_ITEMS_BY_SHOP[shop.id].forEach(it=>{
+        if (it.name && it.name.toLowerCase().includes(SEARCH_TEXT)) match=true;
+        if (!foundItem && it.name && it.name.toLowerCase().includes(SEARCH_TEXT)) foundItem=it;
+      });
     }
-
-    // Search triggers shop filter
-    function triggerSmartSearch() {
-      const searchInput = document.getElementById("searchInput");
-      SEARCH_TEXT = searchInput.value.trim().toLowerCase();
-      applyFilters();
+    if (sText.includes(SEARCH_TEXT)) {
+      results.push(shop);
+    } else if (match) {
+      searchByItem.push(shop);
     }
+  });
+  // If smart search matches product, show only those shops!
+  let filtered = [...results, ...searchByItem.filter(s=>!results.includes(s))];
+  showShops(filtered);
+  // If user types an item, clicking the shop will show its products, and search highlight
+  document.getElementById('items-list').innerHTML='<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>';
+}
+function capitalize(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
-    // Filter shops by category and search text
-    function applyFilters() {
-      if (!CURRENT_SHOPS || !Array.isArray(CURRENT_SHOPS)) return;
-      let filtered = CURRENT_SHOPS;
+// Apply category filter (on already loaded shops)
+function categoryChanged() {
+  CURRENT_CATEGORY = document.getElementById("categorySelect").value;
+  applyFilters();
+}
+function applyFilters() {
+  let filtered = CURRENT_SHOPS;
+  if (CURRENT_CATEGORY && CURRENT_CATEGORY !== "")
+    filtered = filtered.filter(shop => shop.category === CURRENT_CATEGORY);
+  if (SEARCH_TEXT && SEARCH_TEXT.length > 0) {
+    // Use smart search instead!
+    triggerSmartSearch();
+    return;
+  }
+  showShops(filtered);
+  document.getElementById("items-list").innerHTML =
+    '<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>';
+}
 
-      // Filter by category
-      if (CURRENT_CATEGORY && CURRENT_CATEGORY !== "") {
-        filtered = filtered.filter((shop) => shop.category === CURRENT_CATEGORY);
-      }
+// Keyboard modal controls
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { closeLoginPrompt(); }
+});
 
-      // Filter by search text (shop name or address or contact or matching product)
-      if (SEARCH_TEXT && SEARCH_TEXT.length > 0) {
-        filtered = filtered.filter((shop) => {
-          const baseText = (
-            (shop.name || "") +
-            " " +
-            (shop.address || "") +
-            " " +
-            (shop.contact || "")
-          ).toLowerCase();
-
-          // Also check matching_products if available
-          const productsText = shop.matching_products
-            ? shop.matching_products.join(" ").toLowerCase()
-            : "";
-
-          return (
-            baseText.includes(SEARCH_TEXT) || productsText.includes(SEARCH_TEXT)
-          );
-        });
-      }
-
-      showShops(filtered);
-
-      // Clear items list because shop list changed
-      document.getElementById("items-list").innerHTML =
-        '<div style="color:#5C3A21;text-align:center;width:100%;">Select a shop to view its items.</div>';
-    }
-
-    // On page load show location modal initially
-    window.onload = () => {
-      document.getElementById("locationModal").classList.add("active");
-    };
-  </script>
+// On reload, re-apply location if exists
+window.onload = function() {
+  isUserLoggedIn = !!document.getElementById("user-email");
+  restoreLocationFromLocalStorage();
+};
+</script>
 </body>
 </html>
